@@ -1,0 +1,95 @@
+html, body {
+    overflow-x: hidden;
+}
+
+body { 
+    margin: 0;
+    background: rgb(39, 34, 39);
+    outline: 0;
+    position: relative;
+}
+
+:root{
+    --tictactoe_n: 3;
+    --button-margin: 0.5vh;
+    --tile-size: calc((100vh / (var(--tictactoe_n) * var(--tictactoe_n))) - 2 * var(--button-margin));
+    --opacity: 0.2;
+    --border-radius: 1vh;
+    --sidebar-width: 25vh;
+    --ground-color: rgb(58, 67, 73);
+    --board-size: calc(var(--tictactoe_n) * var(--tictactoe_n) * var(--tile-size) + var(--tictactoe_n) * var(--button-margin) * 4);
+    --sidebar-height: none; /* unused if not in portrait mode */
+}
+
+/* override settings on portrait mode: */
+@media (orientation: portrait) {
+
+    :root{
+        --button-margin: 0.5vw;
+        --tile-size: calc((100vw / (var(--tictactoe_n) * var(--tictactoe_n))) - 2 * var(--button-margin));
+        --border-radius: 1vw;
+        --sidebar-width: 40vw;
+        --sidebar-height: 15vw;
+    }
+
+}
+
+.main-container {
+    text-align: center;
+    white-space: nowrap;
+    padding-top: calc(50vh - 0.5 * (var(--grid-height) * var(--tile-size)) - var(--border-radius));
+}
+
+/* override settings on portrait mode: */
+@media (orientation: portrait) {
+
+    .main-container {
+        white-space: normal;
+        padding-top: calc(50vh - 0.5 * (var(--grid-height) * var(--tile-size) + 2 * var(--sidebar-height)) - 2 * var(--border-radius));
+    }
+
+}
+
+.grid-tile {
+    position: absolute;
+    width: var(--tile-size);
+    height: var(--tile-size); 
+    float: center;
+    background: none;
+}
+
+.grid-button {
+    border-radius: var(--button-margin);
+    margin: var(--button-margin);
+    width: calc(var(--tile-size) - (var(--button-margin) * 2));
+    height: calc(var(--tile-size) - (var(--button-margin) * 2));
+    display: inline-block;
+    outline: 0;
+    transition-duration: 0.1s;
+}
+
+.grid-button:focus {
+    outline: 0!important;
+}
+
+.grid-container {
+    border-radius: var(--border-radius);
+    padding: var(--border-radius);
+    margin: auto;
+    width: calc(var(--board-size));
+    height: calc(var(--board-size));
+    background: rgba(0, 0, 0, var(--opacity));
+    display: inline-block;
+    transition-duration: 0.5s;
+}
+
+.subgrid-container {
+    border-radius: var(--border-radius);
+    padding: var(--border-radius);
+    margin: auto;
+    width: calc(var(--tictactoe_n) * var(--tile-size));
+    height: calc(var(--tictactoe_n) * var(--tile-size));
+    background: rgba(0, 0, 0, var(--opacity));
+    display: inline-block;
+    transition-duration: 0.5s;
+}
