@@ -15,6 +15,7 @@ class Subgrid
         this.ground_color = ground_color;
 
         this.create();
+        this.block();
 
         console.log("new subgrid created");
     }
@@ -113,6 +114,7 @@ class Subgrid
                 this.cells[y][x].lock();
             }
         }
+        this.subgrid_container_div.className = "subgrid-container";
     }
 
     unblock()
@@ -125,6 +127,7 @@ class Subgrid
                 this.cells[y][x].unlock();
             }
         }
+        this.subgrid_container_div.className = "subgrid-container-activated";
     }
 
     on_screen_orientation_change(tile_w,tile_h)

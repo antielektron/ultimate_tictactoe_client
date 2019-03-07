@@ -64,11 +64,13 @@ class Tile
     lock()
     {
         this.locked = true;
+        this.elem.style.opacity = 0.3;
     }
 
     unlock()
     {
         this.locked = false;
+        this.elem.style.opacity = 0.5;
     }
 
     deactivate()
@@ -101,7 +103,14 @@ class Tile
         if (!this.is_activated && !this.locked)
         {
             this.elem.style.background = this.ground_color;
-            this.elem.style.opacity = 0.3;
+            if (this.locked)
+            {
+                this.elem.style.opacity = 0.3;
+            }
+            else
+            {
+                this.elem.style.opacity = 0.5;
+            }
             this.elem.style.border = "none";
         }
     }

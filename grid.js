@@ -83,7 +83,7 @@ class Grid
         }
     }
 
-    block()
+    block_all()
     {
         var x,y;
         for (y = 0; y < this.n; y++)
@@ -95,7 +95,7 @@ class Grid
         }
     }
 
-    unblock()
+    unblock_all()
     {
         var x,y;
         for (y = 0; y < this.n; y++)
@@ -105,6 +105,16 @@ class Grid
                 this.subgrids[y][x].unblock();
             }
         }
+    }
+
+    block(x,y)
+    {
+        this.subgrids[y][x].block();
+    }
+
+    unblock(x,y)
+    {
+        this.subgrids[y][x].unblock();
     }
 
     on_screen_orientation_change(tile_w,tile_h)
