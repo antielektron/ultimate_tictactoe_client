@@ -56,8 +56,45 @@ class Subgrid
         this.click_callback = func;
     }
 
-
     click_listener(x,y)
+    {
+        
+        this.check_win(x,y);
+
+        this.click_callback(this.sub_x, this.sub_y, x, y);
+    }
+
+    player_change_listener(player)
+    {
+        var x,y;
+        for (y = 0; y < this.n; y++)
+        {
+            for (x = 0; x < this.n; x++)
+            {
+                this.cells[y][x].player_change_listener(player);
+            }
+        }
+    }
+
+    unlock_request_listener(x,y)
+    {
+        // TODO: unused so far
+
+        //return this.unlock_request_callback(x,y);
+        return false;
+    }
+
+    is_won()
+    {
+        return this.won_player != null;
+    }
+
+    get_won_player()
+    {
+        return this.won_player;
+    }
+
+    check_win(x,y)
     {
         // check whether this subfield is won
         
@@ -126,28 +163,6 @@ class Subgrid
                 this.subgrid_container_div.style.backgroundColor = player.get_color();
             }
         }
-
-        this.click_callback(this.sub_x, this.sub_y, x, y);
-    }
-
-    player_change_listener(player)
-    {
-        var x,y;
-        for (y = 0; y < this.n; y++)
-        {
-            for (x = 0; x < this.n; x++)
-            {
-                this.cells[y][x].player_change_listener(player);
-            }
-        }
-    }
-
-    unlock_request_listener(x,y)
-    {
-        // TODO: unused so far
-
-        //return this.unlock_request_callback(x,y);
-        return false;
     }
 
     activate_all()
@@ -172,6 +187,7 @@ class Subgrid
                 this.cells[y][x].deactivate();
             }
         }
+        this.won_player = null;
         this.subgrid_container_div.style.backgroundColor = ""; // reset to css color
     }
 

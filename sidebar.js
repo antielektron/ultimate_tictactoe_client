@@ -51,7 +51,7 @@ class Sidebar
         // status area:
         this.info_container.appendChild(this.create_label("status"));
 
-        this.status_text = this.create_label("...");
+        this.status_text = this.create_label("select gamemode");
         this.info_container.appendChild(this.status_text);
 
         this.info_container.style.display = "none";
@@ -64,6 +64,7 @@ class Sidebar
     {
         // TODO
         this.game_manager.register_game_mode_change_listener((c) => this.game_mode_change_listener(c));
+        this.game_manager.register_status_change_listener((c) => this.status_change_listener(c));
 
         this.b_local.addEventListener("click", () => this.game_manager.start_local_game());
         this.b_end_game.addEventListener("click", () => this.game_manager.end_game());
@@ -110,7 +111,7 @@ class Sidebar
         {
             this.activate_create_game();
             this.deactivate_control();
-            this.deactivate_info();
+            this.activate_info();
             return
         }
         if (gamemode == "local")
@@ -119,6 +120,11 @@ class Sidebar
             this.activate_control();
             this.activate_info();
         }
+    }
+
+    status_change_listener(statustext)
+    {
+        this.status_text.innerHTML = statustext;
     }
 
 

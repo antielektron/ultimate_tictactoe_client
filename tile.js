@@ -142,10 +142,9 @@ class Tile
             }
         }
 
-        var active_before = this.is_activated;
-        this.activate();
-        if (!active_before)
+        if (!this.is_activated)
         {
+            this.activate();
             this.click_callback(this.x, this.y);
         }
         

@@ -46,6 +46,7 @@ class Grid
 
     click_listener(sub_x, sub_y, x,y)
     {
+        this.check_win(sub_x, sub_y, x, y);
         this.click_callback(sub_x, sub_y, x,y); 
     }
 
@@ -57,6 +58,89 @@ class Grid
             for (x = 0; x < this.n; x++)
             {
                 this.subgrids[y][x].player_change_listener(player);
+            }
+        }
+    }
+
+    is_won()
+    {
+        return this.won_player != null;
+    }
+
+    get_won_player()
+    {
+        return this.won_player;
+    }
+
+    check_win(sub_x, sub_y, x,y)
+    {
+        // check whether the game is won
+        console.log("check for win");
+        if (this.won_player == null)
+        {
+            var i;
+            var subgrid = this.subgrids[sub_y][sub_x];
+            var player = subgrid.cells[y][x].get_activated_player();
+
+            // check column
+            var is_col = true;
+            for (i = 0; i < this.n; i++)
+            {
+                if (!this.subgrids[i][sub_x].is_won() || player.get_id() != this.subgrids[i][sub_x].get_won_player().get_id())
+                {
+                    is_col = false;
+                    break;
+                }
+            }
+
+            // check row
+            var is_row = true;
+            for (i = 0; i < this.n; i++)
+            {
+                if (!this.subgrids[sub_y][i].is_won() || player.get_id() != this.subgrids[sub_y][i].get_won_player().get_id())
+                {
+                    is_row = false;
+                    break;
+                }
+            }
+
+            // check diag:
+
+            // main diag
+            var is_main_diag = false;
+            if (sub_x == sub_y)
+            {
+                is_main_diag = true;
+                for (i = 0; i < this.n; i++)
+                {
+                    if (!this.subgrids[i][i].is_won() || player.get_id() != this.subgrids[i][i].get_won_player().get_id())
+                    {
+                        is_main_diag = false;
+                        break;
+                    }
+                }
+            }
+
+            // secundary diag
+            var is_sec_diag = false;
+            if (sub_x + sub_y == this.n - 1)
+            {
+                is_sec_diag = true;
+                for (i = 0; i < this.n; i++)
+                {
+                    if (!this.subgrids[i][this.n - i - 1].is_won() || player.get_id() != this.subgrids[i][this.n - i - 1].get_won_player().get_id())
+                    {
+                        is_sec_diag = false;
+                        break;
+                    }
+                }
+            }
+
+            if (is_row || is_col || is_main_diag || is_sec_diag)
+            {
+                this.won_player = player;
+                console.log("game over");
+                //this.grid_container_div.style.backgroundColor = player.get_color();
             }
         }
     }
@@ -83,6 +167,8 @@ class Grid
                 this.subgrids[y][x].deactivate_all();
             }
         }
+
+        this.won_player = null;
     }
 
     block_all()
