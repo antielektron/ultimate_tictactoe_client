@@ -8,6 +8,8 @@ class Grid
         this.tile_height = tile_height;
         this.ground_color = ground_color;
 
+        this.won_player = null;
+
         this.subgrids = []
 
         console.log("create grid of size " + this.n);

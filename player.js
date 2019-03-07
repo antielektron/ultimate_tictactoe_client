@@ -4,6 +4,7 @@ class Player
     {
         this.name = name;
         this.color = color;
+        this.id = name;
     }
 
     set_name(name)
@@ -18,7 +19,12 @@ class Player
 
     get_name()
     {
-        return this.name
+        return this.name;
+    }
+
+    get_id()
+    {
+        return this.id;
     }
 
     get_color()

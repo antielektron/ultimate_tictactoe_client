@@ -18,6 +18,8 @@ class Tile
         this.div.style.transform = "translate( calc( " + x + "*" + w + "), calc(" + y + "*" + h + "))";
         
         this.player = null;
+
+        this.activated_player = null;
         this.reset();
         this.bind();
 
@@ -61,6 +63,16 @@ class Tile
         this.deactivate();
     }
 
+    get_is_activated()
+    {
+        return this.is_activated;
+    }
+
+    get_activated_player()
+    {
+        return this.activated_player;
+    }
+
     lock()
     {
         this.locked = true;
@@ -76,6 +88,7 @@ class Tile
     deactivate()
     {
         this.is_activated = false;
+        this.activated_player = null;
         this.elem.style.background = this.ground_color;
         this.elem.style.opacity = 0.3;
         this.elem.style.border = "none";
@@ -84,6 +97,7 @@ class Tile
     activate()
     {  
         this.is_activated = true;
+        this.activated_player = this.player;
         this.elem.style.background = this.player.get_color();
         this.elem.style.opacity = 1.0;
         this.elem.style.border = "2px solid rgba(255,255,255,0.3)";

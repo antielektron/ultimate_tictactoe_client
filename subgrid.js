@@ -8,6 +8,7 @@ class Subgrid
         this.tile_width = tile_width;
 
         this.cells = [];
+        this.won_player = null;
 
         this.sub_x = sub_x;
         this.sub_y = sub_y;
@@ -58,7 +59,75 @@ class Subgrid
 
     click_listener(x,y)
     {
-        this.click_callback(this.sub_x, this.sub_y, x, y); 
+        // check whether this subfield is won
+        
+        if (this.won_player == null)
+        {
+            var i;
+            var player = this.cells[y][x].get_activated_player();
+
+            // check column
+            var is_col = true;
+            for (i = 0; i < this.n; i++)
+            {
+                if (!this.cells[i][x].get_is_activated() || player.get_id() != this.cells[i][x].get_activated_player().get_id())
+                {
+                    is_col = false;
+                    break;
+                }
+            }
+
+            // check row
+            var is_row = true;
+            for (i = 0; i < this.n; i++)
+            {
+                if (!this.cells[y][i].get_is_activated() || player.get_id() != this.cells[y][i].get_activated_player().get_id())
+                {
+                    is_row = false;
+                    break;
+                }
+            }
+
+            // check diag:
+
+            // main diag
+            var is_main_diag = false;
+            if (x == y)
+            {
+                is_main_diag = true;
+                for (i = 0; i < this.n; i++)
+                {
+                    if (!this.cells[i][i].get_is_activated() || player.get_id() != this.cells[i][i].get_activated_player().get_id())
+                    {
+                        is_main_diag = false;
+                        break;
+                    }
+                }
+            }
+
+            // secundary diag
+            var is_sec_diag = false;
+            if (x + y == this.n - 1)
+            {
+                is_sec_diag = true;
+                for (i = 0; i < this.n; i++)
+                {
+                    if (!this.cells[i][this.n - i - 1].get_is_activated() || player.get_id() != this.cells[i][this.n - i - 1].get_activated_player().get_id())
+                    {
+                        is_sec_diag = false;
+                        break;
+                    }
+                }
+            }
+
+            if (is_row || is_col || is_main_diag || is_sec_diag)
+            {
+                this.won_player = player;
+                this.subgrid_container_div.style.backgroundColor = player.get_color();
+            }
+        }
+
+        this.click_callback(this.sub_x, this.sub_y, x, y);
     }
 
     player_change_listener(player)
@@ -103,6 +172,7 @@ class Subgrid
                 this.cells[y][x].deactivate();
             }
         }
+        this.subgrid_container_div.style.backgroundColor = ""; // reset to css color
     }
 
     block()

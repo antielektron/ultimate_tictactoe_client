@@ -8,6 +8,9 @@ class GameManager
 
         this.dummy_player = new Player("test_player", "rgb(0,128,0)");
 
+        this.local_player_a = new Player("red player", "rgb(128,0,0)");
+        this.local_player_b = new Player("green player", "rgb(0,128,0");
+
         this.grid.player_change_listener(this.dummy_player);
 
         // possible modes:
@@ -26,6 +29,9 @@ class GameManager
     {
         // TODO: dummy
         console.log("click");
+
+        var subgrid = this.grid.subgrids[sub_y][sub_x];
+        var tile = subgrid.cells[y][x];
     }
 
     register_game_mode_change_listener(func)
@@ -43,13 +49,18 @@ class GameManager
     start_local_game()
     {
         this.set_game_mode("local");
-        this.grid.unblock_all();
         this.grid.deactivate_all();
+        this.grid.unblock_all();
     }
 
     end_game()
     {
         this.set_game_mode("none");
-        this.grid.unblock_all();
+        this.grid.block_all();
+    }
+
+    on_local_game_move(sub_x, sub_y, x, y)
+    {
+        //checking whether one
     }
 }
