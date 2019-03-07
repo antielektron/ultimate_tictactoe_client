@@ -41,7 +41,10 @@ class Sidebar
         this.create_game_container.style.display = "none";
 
         // control area:
-        this.control_container.appendChild(this.create_button("confirm move"));
+
+        this.b_end_game = this.create_button("end game");
+        this.control_container.appendChild(this.b_end_game);
+
         this.control_container.style.display = "none";
 
 
@@ -63,6 +66,7 @@ class Sidebar
         this.game_manager.register_game_mode_change_listener((c) => this.game_mode_change_listener(c));
 
         this.b_local.addEventListener("click", () => this.game_manager.start_local_game());
+        this.b_end_game.addEventListener("click", () => this.game_manager.end_game());
     }
 
     set_status(text)

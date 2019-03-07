@@ -76,6 +76,7 @@ class Tile
     deactivate()
     {
         this.is_activated = false;
+        this.elem.style.background = this.ground_color;
         this.elem.style.opacity = 0.3;
         this.elem.style.border = "none";
     }

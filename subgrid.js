@@ -43,6 +43,7 @@ class Subgrid
                 row.push(new Tile(b_x, b_y, b_w, b_h, button, this.ground_color, div_button));
                 // TODO: register listener?
                 row[x].register_click_callback((i,j) => this.click_listener(i,j));
+                row[x].register_unlock_request_callback((i,j) => this.unlock_request_listener(i,j));
         
             }
             this.cells.push(row);
