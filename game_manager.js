@@ -39,6 +39,8 @@ class GameManager
             else
             {
                 this.toggle_local_player();
+                this.grid.block_all()
+                this.grid.subgrids[y][x].unblock();
             }
         }
     }

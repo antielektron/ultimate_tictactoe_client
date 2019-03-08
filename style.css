@@ -4,7 +4,7 @@ html, body {
 
 body { 
     margin: 0;
-    background: rgb(39, 34, 39);
+    background: rgb(70, 76, 92);
     outline: 0;
     position: relative;
 }
@@ -16,8 +16,8 @@ body {
     --opacity: 0.2;
     --border-radius: 1vh;
     --sidebar-width: 25vh;
-    --ground-color: rgb(58, 67, 73);
-    --board-size: calc(var(--tictactoe_n) * var(--tictactoe_n) * var(--tile-size) + var(--tictactoe_n) * var(--button-margin) * 4);
+    --ground-color: rgb(214, 214, 214);
+    --board-size: calc(var(--tictactoe_n) * var(--tictactoe_n) * var(--tile-size) + (var(--tictactoe_n) * var(--tictactoe_n) + var(--tictactoe_n)) * var(--button-margin) );
     --sidebar-height: none; /* unused if not in portrait mode */
 }
 
@@ -37,7 +37,7 @@ body {
 .main-container {
     text-align: center;
     white-space: nowrap;
-    padding-top: calc(50vh - 0.5 * (var(--grid-height) * var(--tile-size)) - var(--border-radius));
+    padding-top: calc(50vh - 0.5 * (var(--board-size)));
 }
 
 /* override settings on portrait mode: */
@@ -45,7 +45,7 @@ body {
 
     .main-container {
         white-space: normal;
-        padding-top: calc(50vh - var(--board-size) / 2);
+        padding-top: calc(50vh - 0.5 * var(--board-size));
     }
 
 }
@@ -74,19 +74,17 @@ body {
 
 .grid-container {
     border-radius: var(--border-radius);
-    padding: var(--border-radius);
-    margin: auto;
     width: calc(var(--board-size));
     height: calc(var(--board-size));
-    background: rgba(0, 0, 0, var(--opacity));
+    background: none;
     display: inline-block;
     transition-duration: 0.5s;
 }
 
 .subgrid-container {
-    border-radius: var(--border-radius);
-    padding: var(--border-radius);
-    margin: auto;
+    border-radius: var(--button-margin);
+    padding: var(--button-margin);
+    margin: var(--button-margin);
     width: calc(var(--tictactoe_n) * var(--tile-size));
     height: calc(var(--tictactoe_n) * var(--tile-size));
     background: rgba(0, 0, 0, var(--opacity));
@@ -95,9 +93,9 @@ body {
 }
 
 .subgrid-container-activated {
-    border-radius: var(--border-radius);
-    padding: var(--border-radius);
-    margin: auto;
+    border-radius: var(--button-margin);
+    padding: var(--button-margin);
+    margin: var(--button-margin);
     width: calc(var(--tictactoe_n) * var(--tile-size));
     height: calc(var(--tictactoe_n) * var(--tile-size));
     background: rgba(0,25,64,var(--opacity));
@@ -113,7 +111,7 @@ body {
     display: inline-flex;
     justify-content: space-between;
     flex-direction:column;
-    min-height: var(--board-size);
+    height: calc(var(--board-size) - 2 * var(--border-radius));
     position: relative;
     transition-duration: 0.5s;
 }
@@ -125,8 +123,8 @@ body {
         display: inline-flex;
         justify-content: space-between;
         flex-direction:row;
-        min-height: var(--sidebar-height);
-        min-width: var(--board-size);
+        height: var(--sidebar-height);
+        width: calc(var(--board-size));
     }
 
 }
