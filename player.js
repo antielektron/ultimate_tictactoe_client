@@ -1,20 +1,25 @@
 class Player
 {
-    constructor(name, color)
+    constructor(name, r,g,b)
     {
         this.name = name;
-        this.color = color;
+        this.r = r;
+        this.g = g;
+        this.b = b;
         this.id = name;
     }
 
     set_name(name)
     {
         this.name = name;
+        this.id = name; // TODO: distinguish between name and id
     }
 
-    set_color(color)
+    set_color(r,g,b)
     {
-        this.color = color;
+        this.r = r;
+        this.g = g;
+        this.b = b;
     }
 
     get_name()
@@ -29,7 +34,17 @@ class Player
 
     get_color()
     {
-        return this.color;
+        return "rgb(" + this.r + "," + this.g + "," + this.b + ")";
+    }
+
+    get_color_values()
+    {
+        var col = {
+            r: this.r,
+            g: this.g,
+            b: this.b
+        };
+        return col;
     }
 
 

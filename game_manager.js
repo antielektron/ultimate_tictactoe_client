@@ -1,25 +1,30 @@
 class GameManager
 {
-    constructor(grid, n)
+    constructor(grid, game_server_connection)
     {
         this.grid = grid;
 
-        this.n = n;
+        this.dummy_player = new Player("test_player", 0,255,0);
 
-        this.dummy_player = new Player("test_player", "rgb(0,128,0)");
+        this.local_player_a = new Player("red player", 255,0,0);
+        this.local_player_b = new Player("green player", 0,255,0);
+        this.is_local_player_a = false;
 
-        this.local_player_a = new Player("red player", "rgb(128,0,0)");
-        this.local_player_b = new Player("green player", "rgb(0,128,0");
-        this.is_local_player_a = false;;
+        this.remote_player = new Player("you", 0,255,0);
+        this.remote_opponent = new Player("remote player", 255,0,0);
+        this.remote_is_local_turn = false;
 
         this.grid.player_change_listener(this.dummy_player);
 
         // possible modes:
         // -- none
         // -- local
-        // -- remote //TODO
+        // -- remote
 
         this.game_mode = "none";
+
+        this.game_server_connection = game_server_connection;
+        game_server_connection.set_game_manager(this);
 
         this.grid.register_click_callback((i,j,k,l) => this.click_listener(i,j,k,l));
 
@@ -41,7 +46,52 @@ class GameManager
                 this.toggle_local_player();
                 this.grid.block_all()
                 this.grid.subgrids[y][x].unblock();
+                if (this.grid.subgrids[y][x].is_draw())
+                {
+                    this.grid.unblock_all();
+                }
             }
+        }
+        else if(this.game_mode == "remote")
+        {
+
+            this.grid.block_all();
+
+            if (this.remote_is_local_turn)
+            {
+                this.game_server_connection.send_move(sub_x, sub_y, x, y);
+            }
+
+            if (grid.is_won())
+            {
+                if (this.remote_is_local_turn)
+                {
+                    this.status_change_listener("Congratulation, you won!");
+                }
+                else
+                {
+                    this.status_change_listener("Game over, you lost!");
+                }
+                this.end_game();
+            }
+
+            else
+            {
+                this.toggle_remote_player();
+
+                if (this.remote_is_local_turn)
+                {
+                    this.grid.block_all();
+
+                    this.grid.subgrids[y][x].unblock();
+
+                    if (this.grid.subgrids[y][x].is_draw())
+                    {
+                        this.grid.unblock_all();
+                    }
+                }
+            }
+            
         }
     }
 
@@ -74,6 +124,107 @@ class GameManager
 
     }
 
+    register_remote_game(player_name)
+    {
+        console.log("set player name to: " + player_name);
+        if (player_name == "")
+        {
+            this.status_change_listener("enter your name first!");
+            return;
+        }
+        this.set_game_mode("remote");
+        this.grid.deactivate_all();
+        this.grid.block_all();
+
+        this.remote_player.set_name(player_name);
+
+        this.status_change_listener("connect to server...");
+
+        this.game_server_connection.connect(() => {
+            this.game_server_connection.set_player(this.remote_player);
+            this.game_server_connection.register();
+        });
+    }
+
+    register_response_listener(is_accepted)
+    {
+
+        if (this.game_mode != "remote")
+        {
+            return;
+        }
+
+        if (is_accepted)
+        {
+            this.status_change_listener("Waiting for matchmaking");
+        }
+        else
+        {
+            this.status_change_listener("could not register for matchmaking. Maybe the name is already in use?");
+            this.set_game_mode("none");
+            this.grid.deactivate_all();
+            this.grid.block_all();
+
+        }
+    }
+    
+    start_game_listener(opponent_name, is_first_move)
+    {
+        if (this.game_mode != "remote")
+        {
+            return;
+        }
+
+        this.remote_opponent.set_name(opponent_name);
+        this.remote_is_local_turn = is_first_move;
+
+        if (is_first_move)
+        {
+            this.grid.deactivate_all();
+            this.grid.unblock_all();
+
+            this.grid.player_change_listener(this.remote_player);
+
+            this.status_change_listener("game aginst " + opponent_name + " started. It's your turn");
+        }
+        else
+        {
+            this.grid.deactivate_all();
+            this.grid.block_all();
+
+            this.grid.player_change_listener(this.remote_opponent);
+
+            this.status_change_listener("game started, it's " + opponent_name + " turn");
+        }
+    }
+
+    move_listener(sub_x, sub_y, x, y)
+    {
+        if (this.game_mode != "remote" || this.remote_is_local_turn)
+        {
+            console.log("received unexpected move");
+            return;
+        }
+
+        this.grid.block_all();
+        this.grid.subgrids[sub_y][sub_x].unblock();
+        this.grid.subgrids[sub_y][sub_x].cells[y][x].on_click();
+
+    }
+
+    end_game_listener()
+    {
+
+        if (this.game_mode != "remote")
+        {
+            return;
+        }
+        this.set_game_mode("none");
+        this.grid.block_all();
+
+        this.status_change_listener("game was closed by server or opponent");
+    }
+
     toggle_local_player()
     {
         this.is_local_player_a = !this.is_local_player_a;
@@ -83,9 +234,34 @@ class GameManager
         this.grid.player_change_listener(next_player);
     }
 
+    toggle_remote_player()
+    {
+        this.remote_is_local_turn = !this.remote_is_local_turn;
+        if (this.remote_is_local_turn)
+        {
+            this.status_change_listener("your turn");
+            this.grid.player_change_listener(this.remote_player);
+        }
+        else
+        {
+            this.status_change_listener("waiting for opponents turn...");
+            this.grid.player_change_listener(this.remote_opponent);
+        }
+    }
+
     end_game()
     {
+        if (this.game_mode == "remote")
+        {
+            this.game_server_connection.close();
+        }
         this.set_game_mode("none");
         this.grid.block_all();
+    }
+
+    connection_error_listener()
+    {
+        this.status_change_listener("connection error");
+        this.end_game();
     }
 }

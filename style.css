@@ -4,7 +4,7 @@ html, body {
 
 body { 
     margin: 0;
-    background: rgb(70, 76, 92);
+    background: rgb(30, 36, 119) ;
     outline: 0;
     position: relative;
 }
@@ -13,12 +13,12 @@ body {
     --tictactoe_n: 3;
     --button-margin: 0.5vh;
     --tile-size: calc((100vh / (var(--tictactoe_n) * var(--tictactoe_n))) - 2 * var(--button-margin));
-    --opacity: 0.2;
+    --opacity: 1;
     --border-radius: 1vh;
     --sidebar-width: 25vh;
-    --ground-color: rgb(214, 214, 214);
+    --ground-color: rgb(30, 36, 119) ;
     --board-size: calc(var(--tictactoe_n) * var(--tictactoe_n) * var(--tile-size) + (var(--tictactoe_n) * var(--tictactoe_n) + var(--tictactoe_n)) * var(--button-margin) );
-    --sidebar-height: none; /* unused if not in portrait mode */
+    --sidebar-height: calc(var(--board-size) - 2 * var(--border-radius));
 }
 
 /* override settings on portrait mode: */
@@ -28,7 +28,7 @@ body {
         --button-margin: 0.5vw;
         --tile-size: calc((100vw / (var(--tictactoe_n) * var(--tictactoe_n))) - 2 * var(--button-margin));
         --border-radius: 1vw;
-        --sidebar-width: 40vw;
+        --sidebar-width: calc(var(--board-size) - 2 * var(--border-radius));
         --sidebar-height: 15vw;
     }
 
@@ -65,6 +65,7 @@ body {
     height: calc(var(--tile-size) - (var(--button-margin) * 2));
     display: inline-block;
     outline: 0;
+    font-size: calc(3 * var(--border-radius));
     transition-duration: 0.1s;
 }
 
@@ -87,7 +88,7 @@ body {
     margin: var(--button-margin);
     width: calc(var(--tictactoe_n) * var(--tile-size));
     height: calc(var(--tictactoe_n) * var(--tile-size));
-    background: rgba(0, 0, 0, var(--opacity));
+    background: rgba(255, 255, 255,0.05);
     display: inline-block;
     transition-duration: 0.5s;
 }
@@ -98,7 +99,7 @@ body {
     margin: var(--button-margin);
     width: calc(var(--tictactoe_n) * var(--tile-size));
     height: calc(var(--tictactoe_n) * var(--tile-size));
-    background: rgba(0,25,64,var(--opacity));
+    background: rgba(255, 255, 255, 0.2);
     display: inline-block;
     transition-duration: 0.5s;
 }
@@ -107,11 +108,12 @@ body {
     border-radius: var(--border-radius);
     padding: var(--border-radius);
     vertical-align: top;
-    background: rgba(0, 0, 0, var(--opacity));
+    background: rgba(255, 255, 255, 0.05);
     display: inline-flex;
     justify-content: space-between;
     flex-direction:column;
-    height: calc(var(--board-size) - 2 * var(--border-radius));
+    height: var(--sidebar-height);
+    width: var(--sidebar-width);
     position: relative;
     transition-duration: 0.5s;
 }
@@ -120,11 +122,8 @@ body {
 @media (orientation: portrait) {
 
     .sidebar-container {
-        display: inline-flex;
-        justify-content: space-between;
         flex-direction:row;
-        height: var(--sidebar-height);
-        width: calc(var(--board-size));
+        padding: none;
     }
 
 }
@@ -138,7 +137,18 @@ body {
     vertical-align: middle;
 }
 
+
 .control-container {
+    border-radius: var(--border-radius);
+    padding: var(--border-radius);
+    top: 0;
+    background: none;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+
+.setting-container {
     border-radius: var(--border-radius);
     padding: var(--border-radius);
     top: 0;
@@ -162,6 +172,16 @@ body {
     color: white;
     display: flex;
     flex-direction: column;
+    font-size: calc(2 * var(--border-radius));
+    width: calc(var(--sidebar-width) - 4 * var(--border-radius));
+    text-align: left;
+}
+
+@media (orientation: portrait) {
+    .sidebar-label
+    {
+        width: calc(var(--sidebar-width) * 0.3);
+    }
 }
 
 .sidebar-button {
@@ -170,20 +190,54 @@ body {
     border: none;
     outline: 0;
     transition-duration: 0.3s;
-    background: rgba(0, 0, 0, var(--opacity));
+    background: rgba(0, 0, 0, 0.5);
     color: rgb(255, 255, 255);
     font-size: calc(3 * var(--border-radius));
-    width: var(--sidebar-width);
-    height: calc(5 * var(--border-radius));
+    height: calc(4 * var(--border-radius));
+    width: calc(var(--sidebar-width) - 4 * var(--border-radius));
     vertical-align: middle;
     display: flex;
     flex-direction: column;
 }
 
+@media (orientation: portrait) {
+
+    .sidebar-button{
+        width: calc(0.25 * var(--sidebar-width));
+        height: calc(0.3 * var(--sidebar-height));
+    }
+}
+
+
 .sidebar-button:hover {
-    background: rgba(255, 255, 255, var(--opacity));
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .sidebar-button:active {
-    background: rgba(255, 255, 255, calc(var(--opacity) * 2));
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.sidebar-input {
+    border-radius: var(--border-radius);
+    margin: var(--border-radius);
+    border: none;
+    outline: 0;
+    transition-duration: 0.3s;
+    background: rgba(0, 0, 0, 0.5);
+    color: rgb(255, 255, 255);
+    font-size: calc(3 * var(--border-radius));
+    height: calc(4 * var(--border-radius));
+    width: calc(var(--sidebar-width) - 4 * var(--border-radius));
+    vertical-align: middle;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+@media (orientation: portrait) {
+
+    .sidebar-input{
+        height: calc(0.3 * var(--sidebar-height));
+        width: calc(0.25 * var(--sidebar-width));
+    }
 }
