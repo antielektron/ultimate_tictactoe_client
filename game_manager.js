@@ -16,6 +16,8 @@ class GameManager
 
         this.grid.player_change_listener(this.dummy_player);
 
+        this.received_close_message = false;
+
         // possible modes:
         // -- none
         // -- local
@@ -233,10 +235,10 @@ class GameManager
         {
             return;
         }
-        this.set_game_mode("none");
-        this.grid.block_all();
 
         this.status_change_listener("game was closed by server or opponent", "Game Over");
+
+        this.end_game();
     }
 
     toggle_local_player()
