@@ -208,7 +208,7 @@ class GameManager
 
             this.grid.player_change_listener(this.remote_opponent);
 
-            this.status_change_listener("game started, it's " + opponent_name + " turn");
+            this.status_change_listener("game started, it's " + opponent_name + " turn", status_title);
         }
     }
 
