@@ -73,9 +73,10 @@ class Sidebar
 
 
         // status area:
-        this.info_container.appendChild(this.create_label("status:"));
+        this.status_title = this.create_label("");
+        this.info_container.appendChild(this.status_title);
 
-        this.status_text = this.create_label("select gamemode");
+        this.status_text = this.create_label("select gamemode. <br> <a href=https://en.wikipedia.org/wiki/Ultimate_tic-tac-toe#Rules>here are the rules </a>");
         this.info_container.appendChild(this.status_text);
 
         this.info_container.style.display = "none";
@@ -88,7 +89,7 @@ class Sidebar
     {
         // TODO
         this.game_manager.register_game_mode_change_listener((c) => this.game_mode_change_listener(c));
-        this.game_manager.register_status_change_listener((c) => this.status_change_listener(c));
+        this.game_manager.register_status_change_listener((c,t=null) => this.status_change_listener(c, t));
 
         this.b_local.addEventListener("click", () => this.game_manager.start_local_game());
         this.b_end_game.addEventListener("click", () => this.game_manager.end_game());
@@ -171,11 +172,13 @@ class Sidebar
         }
     }
 
-    status_change_listener(statustext)
+    status_change_listener(statustext, title=null)
     {
         this.status_text.innerHTML = statustext;
+        if (title != null)
+        {
+            this.status_title.innerHTML = "<p>" + title + "</p>";
+        }
     }
-
-
 
 }

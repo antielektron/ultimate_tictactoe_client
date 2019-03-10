@@ -9,6 +9,7 @@ class Grid
         this.ground_color = ground_color;
 
         this.won_player = null;
+        this.n_complete_subgrids = 0;
 
         this.subgrids = []
 
@@ -47,7 +48,8 @@ class Grid
     click_listener(sub_x, sub_y, x,y)
     {
         this.check_win(sub_x, sub_y, x, y);
-        this.click_callback(sub_x, sub_y, x,y); 
+        this.check_complete(sub_x, sub_y, x, y);
+        this.click_callback(sub_x, sub_y, x, y); 
     }
 
     player_change_listener(player)
@@ -62,6 +64,11 @@ class Grid
         }
     }
 
+    is_complete()
+    {
+        return !(this.n_complete_subgrids < this.n * this.n);
+    }
+
     is_won()
     {
         return this.won_player != null;
@@ -70,6 +77,14 @@ class Grid
     get_won_player()
     {
         return this.won_player;
+    }
+
+    check_complete(sub_x, sub_y, x, y)
+    {
+        if (this.subgrids[sub_x][sub_y].is_won() || this.subgrids[sub_x][sub_y].is_draw())
+        {
+            this.n_complete_subgrids++;
+        }
     }
 
     check_win(sub_x, sub_y, x,y)
@@ -169,6 +184,7 @@ class Grid
         }
 
         this.won_player = null;
+        this.n_complete_subgrids = 0;
     }
 
     block_all()

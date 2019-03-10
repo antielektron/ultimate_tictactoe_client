@@ -34,6 +34,16 @@ body {
 
 }
 
+/* unvisited link */
+a:link {
+    color: white;
+}
+
+/* visited link */
+a:visited {
+    color: white;
+}
+
 .main-container {
     text-align: center;
     white-space: nowrap;

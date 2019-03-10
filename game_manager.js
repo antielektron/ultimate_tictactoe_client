@@ -38,7 +38,12 @@ class GameManager
             // check whether the game is over:
             if (grid.is_won())
             {
-                this.status_change_listener("" + grid.get_won_player().get_name() + " has won.")
+                this.status_change_listener("" + grid.get_won_player().get_name() + " has won.", "Game Over")
+                this.end_game();
+            }
+            else if (grid.is_complete())
+            {
+                this.status_change_listener("Draw. Everybody looses!", "Game Over");
                 this.end_game();
             }
             else
@@ -46,7 +51,7 @@ class GameManager
                 this.toggle_local_player();
                 this.grid.block_all()
                 this.grid.subgrids[y][x].unblock();
-                if (this.grid.subgrids[y][x].is_draw())
+                if (this.grid.subgrids[y][x].is_draw() || this.grid.subgrids[y][x].is_won())
                 {
                     this.grid.unblock_all();
                 }
@@ -66,12 +71,17 @@ class GameManager
             {
                 if (this.remote_is_local_turn)
                 {
-                    this.status_change_listener("Congratulation, you won!");
+                    this.status_change_listener("Congratulation, you won!", "Game Over");
                 }
                 else
                 {
-                    this.status_change_listener("Game over, you lost!");
+                    this.status_change_listener("You lost!", "Game Over");
                 }
+                this.end_game();
+            }
+            else if (grid.is_complete())
+            {
+                this.status_change_listener("Draw. Everybody looses!", "Game Over");
                 this.end_game();
             }
 
@@ -85,7 +95,7 @@ class GameManager
 
                     this.grid.subgrids[y][x].unblock();
 
-                    if (this.grid.subgrids[y][x].is_draw())
+                    if (this.grid.subgrids[y][x].is_draw()|| this.grid.subgrids[y][x].is_won())
                     {
                         this.grid.unblock_all();
                     }
@@ -119,6 +129,8 @@ class GameManager
         this.grid.unblock_all();
 
         this.is_local_player_a = false;
+
+        this.status_change_listener("", "local game")
 
         this.toggle_local_player();
 
@@ -156,7 +168,7 @@ class GameManager
 
         if (is_accepted)
         {
-            this.status_change_listener("Waiting for matchmaking");
+            this.status_change_listener("Connected. Waiting for matchmaking...");
         }
         else
         {
@@ -178,6 +190,8 @@ class GameManager
         this.remote_opponent.set_name(opponent_name);
         this.remote_is_local_turn = is_first_move;
 
+        var status_title = "" + this.remote_player.get_name() + " vs. " + opponent_name;
+
         if (is_first_move)
         {
             this.grid.deactivate_all();
@@ -185,7 +199,7 @@ class GameManager
 
             this.grid.player_change_listener(this.remote_player);
 
-            this.status_change_listener("game aginst " + opponent_name + " started. It's your turn");
+            this.status_change_listener("game aginst " + opponent_name + " started. It's your turn", status_title);
         }
         else
         {
@@ -222,7 +236,7 @@ class GameManager
         this.set_game_mode("none");
         this.grid.block_all();
 
-        this.status_change_listener("game was closed by server or opponent");
+        this.status_change_listener("game was closed by server or opponent", "Game Over");
     }
 
     toggle_local_player()
@@ -230,7 +244,7 @@ class GameManager
         this.is_local_player_a = !this.is_local_player_a;
         var next_player = this.is_local_player_a ? this.local_player_a : this.local_player_b;
         
-        this.status_change_listener("" + "it's " + next_player.get_name() + "s turn...");
+        this.status_change_listener("" + "it's " + next_player.get_name() + "'s turn...");
         this.grid.player_change_listener(next_player);
     }
 
@@ -244,7 +258,7 @@ class GameManager
         }
         else
         {
-            this.status_change_listener("waiting for opponents turn...");
+            this.status_change_listener("waiting for " + this.remote_opponent.get_name() + "'s move...");
             this.grid.player_change_listener(this.remote_opponent);
         }
     }
@@ -255,13 +269,17 @@ class GameManager
         {
             this.game_server_connection.close();
         }
+        else if (this.game_mode == "local")
+        {
+            this.status_change_listener("game is closed", "Game Over");
+        }
         this.set_game_mode("none");
         this.grid.block_all();
     }
 
     connection_error_listener()
     {
-        this.status_change_listener("connection error");
+        this.status_change_listener("connection error", "Game Over");
         this.end_game();
     }
 }

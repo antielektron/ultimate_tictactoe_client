@@ -136,7 +136,7 @@ class GameServerConnection
 
     connect(callback_func)
     {
-        this.socket = new WebSocket("ws://" + this.ip + ":" + this.port);
+        this.socket = new WebSocket("wss://" + this.ip + ":" + this.port);
         this.socket.onmessage = (e => this.on_message(e));
         this.socket.onopen = (() => this.on_open(callback_func));
         this.socket.onerror = (() => this.on_error());
