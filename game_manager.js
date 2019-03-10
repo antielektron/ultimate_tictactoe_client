@@ -23,6 +23,8 @@ class GameManager
 
         this.game_mode = "none";
 
+        this.use_notification = false;
+
         this.game_server_connection = game_server_connection;
         game_server_connection.set_game_manager(this);
 
@@ -292,22 +294,24 @@ class GameManager
         this.end_game();
     }
 
+    activate_notifications()
+    {
+        this.use_notification = true;
+    }
+
     notify(text) {
-        if (!("Notification" in window)) {
-            return;
-        }
+        
+        Notification.requestPermission(function(result) {
+            if (result === 'granted') {
+                navigator.serviceWorker.ready.then(function(registration) {
+                registration.showNotification(text, {
+                        icon: './icon.png',
+                        vibrate: [200, 200],
+                        tag: "tictactoe-notification"
+                    });
+                });
+            }
+        });
       
-        else if (Notification.permission === "granted") {
-            var notification = new Notification(text);
-        }
-      
-        else if (Notification.permission !== 'denied') {
-            Notification.requestPermission(function (permission) {
-                if (permission === "granted") {
-                    var notification = new Notification(text);
-                }
-            });
-        }
-      
-      }
+    }
 }

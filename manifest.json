@@ -2,7 +2,8 @@
     "name": "Ultimate TicTacToe",
     "short_name": "Ultimate TicTacToe",
     "display": "standalone",
-    "start_url": "/",
+    "start_url": "/website/ultimate_tictactoe/",
+    "scope": "/website/ultimate_tictactoe/",
     "theme_color": "#4650e2",
     "background_color": "#1e2477",
     "icons": [

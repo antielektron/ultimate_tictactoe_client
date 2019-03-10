@@ -3,22 +3,22 @@ self.addEventListener('install', function(e) {
     e.waitUntil(
       caches.open('your-magic-cache').then(function(cache) {
         return cache.addAll([
-          '/',
-          '/index.html',
-          '/manifest.json',
-          '/icon.png',
-          '/LICENSE',
-          '/main.js',
-          '/grid.js',
-          '/game_manager.js',
-          '/game_server_connection.js',
-          '/sidebar.js',
-          '/settings.js',
-          '/subgrid.js',
-          '/tile.js',
-          '/README.md',
-          '/site.js',
-          '/style.css',
+          '/website/ultimate_tictactoe/',
+          '/website/ultimate_tictactoe/index.html',
+          '/website/ultimate_tictactoe/manifest.json',
+          '/website/ultimate_tictactoe/icon.png',
+          '/website/ultimate_tictactoe/LICENSE',
+          '/website/ultimate_tictactoe/main.js',
+          '/website/ultimate_tictactoe/grid.js',
+          '/website/ultimate_tictactoe/game_manager.js',
+          '/website/ultimate_tictactoe/game_server_connection.js',
+          '/website/ultimate_tictactoe/sidebar.js',
+          '/website/ultimate_tictactoe/settings.js',
+          '/website/ultimate_tictactoe/subgrid.js',
+          '/website/ultimate_tictactoe/tile.js',
+          '/website/ultimate_tictactoe/README.md',
+          '/website/ultimate_tictactoe/site.js',
+          '/website/ultimate_tictactoe/style.css',
         ]);
       })
     );
