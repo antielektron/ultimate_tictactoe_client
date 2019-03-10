@@ -31,3 +31,7 @@ self.addEventListener('install', function(e) {
       })
     );
 });
+
+self.addEventListener('notificationclick', function (event) {
+    console.log ("push message clicked");
+});
