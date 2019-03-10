@@ -16,8 +16,6 @@ class GameManager
 
         this.grid.player_change_listener(this.dummy_player);
 
-        this.received_close_message = false;
-
         // possible modes:
         // -- none
         // -- local
@@ -194,6 +192,8 @@ class GameManager
 
         var status_title = "" + this.remote_player.get_name() + " vs. " + opponent_name;
 
+        this.notify("Your game against " + opponent_name + " started");
+
         if (is_first_move)
         {
             this.grid.deactivate_all();
@@ -238,6 +238,8 @@ class GameManager
 
         this.status_change_listener("game was closed by server or opponent", "Game Over");
 
+        this.notify("Game is closed");
+
         this.end_game();
     }
 
@@ -257,6 +259,7 @@ class GameManager
         {
             this.status_change_listener("your turn");
             this.grid.player_change_listener(this.remote_player);
+            this.notify("it's your turn");
         }
         else
         {
@@ -265,11 +268,15 @@ class GameManager
         }
     }
 
-    end_game()
+    end_game(clicked_by_local_user = false)
     {
         if (this.game_mode == "remote")
         {
             this.game_server_connection.close();
+            if (clicked_by_local_user)
+            {
+                this.status_change_listener("you closed the game", "Game Over");
+            }
         }
         else if (this.game_mode == "local")
         {
@@ -284,4 +291,23 @@ class GameManager
         this.status_change_listener("connection error", "Game Over");
         this.end_game();
     }
+
+    notify(text) {
+        if (!("Notification" in window)) {
+            return;
+        }
+      
+        else if (Notification.permission === "granted") {
+            var notification = new Notification(text);
+        }
+      
+        else if (Notification.permission !== 'denied') {
+            Notification.requestPermission(function (permission) {
+                if (permission === "granted") {
+                    var notification = new Notification(text);
+                }
+            });
+        }
+      
+      }
 }

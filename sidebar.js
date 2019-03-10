@@ -92,7 +92,7 @@ class Sidebar
         this.game_manager.register_status_change_listener((c,t=null) => this.status_change_listener(c, t));
 
         this.b_local.addEventListener("click", () => this.game_manager.start_local_game());
-        this.b_end_game.addEventListener("click", () => this.game_manager.end_game());
+        this.b_end_game.addEventListener("click", () => this.game_manager.end_game(true));
         this.b_remote.addEventListener("click", () => this.game_manager.register_remote_game(this.get_player_name()));
     }
 
