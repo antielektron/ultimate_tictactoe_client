@@ -27,12 +27,12 @@ class LocalMatchManager
         // check whether the game is over:
         if (grid.is_won())
         {
-            this.status_change_listener("" + grid.get_won_player().get_name() + " has won.", "Game Over")
+            this.status_label.innerHTML = "" + grid.get_won_player().get_name() + " has won.";
             this.end_game();
         }
         else if (grid.is_complete())
         {
-            this.status_change_listener("Draw. Everybody looses!", "Game Over");
+            this.status_label.innerHTML = "Draw. Everybody looses!";
             this.end_game();
         }
         else
