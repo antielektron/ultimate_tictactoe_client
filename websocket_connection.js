@@ -66,9 +66,10 @@ class WebsocketConnection
 
     on_close()
     {
+        var login_failed = !this.registered;
         this.registered = false;
         this.connected = false;
-        if (!this.closed_by_user)
+        if (!this.closed_by_user && !login_failed)
         {
             this.status_label.innerHTML = "connection to server closed";
             this.error_callback_func();
