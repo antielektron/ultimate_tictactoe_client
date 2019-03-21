@@ -1,4 +1,7 @@
 
+var home = "https://the-cake-is-a-lie.net/website/ultimate_tictactoe/";
+var rel_home = "/website/ultimate_tictactoe";
+
 self.addEventListener('install', function (e) {
   e.waitUntil(
     caches.open('your-magic-cache').then(function (cache) {
