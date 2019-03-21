@@ -117,6 +117,7 @@ on_close_click = function() {
     else if (connection != null)
     {
         connection.on_close_click();
+        match_control.hide();
     }
 }
 

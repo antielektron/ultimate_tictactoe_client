@@ -28,6 +28,11 @@ class OnlineMatchManager
 
         this.match_button.className = "infobar-button-active";
 
+        if (this.match_state.active_player == this.local_player.get_name())
+        {
+            this.game_server_connection.notify("your turn against " + this.online_opponent.get_name());
+        }
+
         this.is_closed = false;
 
     }
@@ -70,9 +75,9 @@ class OnlineMatchManager
         this.match_state = match_state;
         this.match_button.className = "infobar-button-active";
 
-        if (this.match_state.current_player != this.current_player_name)
+        if (this.match_state.active_player == this.local_player.get_name())
         {
-            this.game_server_connection.notify("" + this.online_opponent.get_name() + " moved");
+            this.game_server_connection.notify("your turn against " + this.online_opponent.get_name());
         }
     }
 

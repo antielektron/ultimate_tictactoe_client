@@ -232,6 +232,7 @@ class WebsocketConnection
         };
 
         this.socket.send(JSON.stringify(msg_object));
+
     }
 
     send_match_request(player_name)
