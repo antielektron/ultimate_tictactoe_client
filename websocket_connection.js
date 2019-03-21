@@ -1,6 +1,6 @@
 class WebsocketConnection
 {
-    constructor(ip, port, grid, status_label, matches_container, control_container, login_callback_func)
+    constructor(ip, port, grid, status_label, matches_container, control_container, login_callback_func, error_callback_func)
     {
         this.ip = ip;
         this.port = port;
@@ -23,8 +23,9 @@ class WebsocketConnection
         this.login_callback_func = login_callback_func;
 
         this.openmatches = {};
+        this.error_callback_func = error_callback_func;
 
-        this.
+        this.closed_by_user = false;
 
         matches_container.hide();
 
@@ -57,10 +58,22 @@ class WebsocketConnection
         this.login(username, pw)
     }
 
+    on_reopen(session_id)
+    {
+        this.connected = true;
+        this.relogin(session_id);
+    }
+
     on_close()
     {
         this.registered = false;
         this.connected = false;
+        if (!this.closed_by_user)
+        {
+            this.status_label.innerHTML = "connection to server closed";
+            this.error_callback_func();
+        }
+        
     }
 
     on_error()
@@ -68,6 +81,11 @@ class WebsocketConnection
         console.log("error in websocket connection");
         this.registered = false;
         this.connected = false;
+        if (!this.closed_by_user)
+        {
+            this.status_label.innerHTML = "connection to server lost";
+            this.error_callback_func();
+        }
     }
 
     
@@ -90,9 +108,8 @@ class WebsocketConnection
                 this.on_register_response(msg.data);
                 break;
             
-            case "temp_session_response":
-                console.log(json_msg)
-                this.on_temp_session_response(msg.data);
+            case "reconnect_response":
+                this.on_reconnect_response(msg.data);
                 break;
             
             case "match_update":
@@ -118,7 +135,13 @@ class WebsocketConnection
             this.openmatches[this.active_match].on_user_close();
 
 
-        } 
+        }
+
+        if (this.current_end_button != null)
+        {
+            this.control_container.container.deleteChild(this.current_end_button);
+            this.current_end_button = null;
+        }
     }
 
 
@@ -149,7 +172,6 @@ class WebsocketConnection
             if (id in this.openmatches)
             {
                 this.openmatches[id].update_match_state(match_state)
-                console.log("update!!!");
                 if (this.active_match == id)
                 {
                     this.openmatches[id].open_match();
@@ -179,9 +201,17 @@ class WebsocketConnection
         
     }
 
-    on_temp_session_response(data)
+    on_reconnect_response(data)
     {
-        console.log("not supported yet");
+        if (data.success)
+        {
+            this.registered = true;
+            this.session_id = data.id;
+            this.player.set_name(data.user);
+            this.login_callback_func();
+        }
+
+        this.status_label.innerHTML = data.msg;
     }
 
     on_match_request_response(data)
@@ -199,9 +229,18 @@ class WebsocketConnection
 
     connect(username, pw)
     {
-        this.socket = new WebSocket("wss://" + this.ip + ":" + this.port);
+        this.socket = new WebSocket(server_protocol + this.ip + ":" + this.port);
         this.socket.onmessage = (e => this.on_message(e));
         this.socket.onopen = (() => this.on_open(username, pw));
+        this.socket.onerror = (() => this.on_error());
+        this.socket.onclose = (() => this.on_close());
+    }
+
+    reconnect(session_id)
+    {
+        this.socket = new WebSocket(server_protocol + this.ip + ":" + this.port);
+        this.socket.onmessage = (e => this.on_message(e));
+        this.socket.onopen = (() => this.on_reopen(session_id));
         this.socket.onerror = (() => this.on_error());
         this.socket.onclose = (() => this.on_close());
     }
@@ -261,6 +300,19 @@ class WebsocketConnection
         this.socket.send(JSON.stringify(msg_object));
     }
 
+    relogin(session_id)
+    {
+        // register for game queue
+        var msg_object = {
+            type: "reconnect",
+            data: {
+                id: session_id
+            }
+        };
+
+        this.socket.send(JSON.stringify(msg_object));
+    }
+
     send_disconnect()
     {
         if (!this.is_connected)
@@ -283,6 +335,8 @@ class WebsocketConnection
         {
             this.openmatches[key].remove_match();
         }
+        this.status_label.innerHTML = "logged out";
+        this.closed_by_user = true;
         this.socket.close();
     }
 

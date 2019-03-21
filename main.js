@@ -68,6 +68,39 @@ logged_in = false;
 // connection stuff:
 
 var connection = null;
+var session_id = null;
+
+
+// cookies:
+function get_cookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+function set_cookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    var expires = "expires="+d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function check_cookie(cname) {
+    var tmp = get_cookie(cname);
+    if (tmp != "") {
+        return true;
+    }
+    return false;
+}
 
 
 
@@ -150,16 +183,8 @@ login_callback = function()
     end_local_game();
     l_username.innerHTML = "logged in as: " + connection.player.get_name();
 
-}
+    set_cookie("sessionid", connection.session_id, 30);
 
-login = function(){
-
-    if (connection != null)
-    {
-        connection.close();
-    }
-    connection = new WebsocketConnection(server_url, server_port, grid, l_status, match_slot_container, match_control, login_callback);
-    connection.connect(i_register_username.value, i_register_pw.value);
 }
 
 logout = function()
@@ -169,6 +194,12 @@ logout = function()
     {
 
         connection.close();
+        if (check_cookie("sessionid"))
+        {
+            // delete session:
+            session_id = get_cookie("sessionid");
+            set_cookie("sessionid", session_id, -100);
+        }
 
     }
 
@@ -177,6 +208,36 @@ logout = function()
     grid.deactivate_all();
     grid.block_all();
     end_local_game();
+}
+
+reconnect = function()
+{
+    if (check_cookie("sessionid"))
+    {
+        session_id = get_cookie("sessionid");
+        if (connection != null)
+        {
+            connection.close();
+        }
+        connection = new WebsocketConnection(server_url, server_port, grid, l_status, match_slot_container, match_control, login_callback, on_connection_error);
+        connection.reconnect(session_id);
+    }
+}
+
+on_connection_error = function()
+{
+    connection = null;
+    logout();
+}
+
+login = function(){
+
+    if (connection != null)
+    {
+        connection.close();
+    }
+    connection = new WebsocketConnection(server_url, server_port, grid, l_status, match_slot_container, match_control, login_callback, on_connection_error);
+    connection.connect(i_register_username.value, i_register_pw.value);
 }
 
 search_match = function()
@@ -214,6 +275,8 @@ b_logout.addEventListener("click", logout);
 
 b_match_search.addEventListener("click", search_match);
 b_match_invite.addEventListener("click", invite_player);
+
+reconnect();
 
 
 /*

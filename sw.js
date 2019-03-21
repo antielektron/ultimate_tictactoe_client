@@ -33,3 +33,27 @@ self.addEventListener('install', function(e) {
       })
     );
 });
+
+self.addEventListener('notificationclick', function(event) {
+  event.waitUntil(async function() {
+      const allClients = await clients.matchAll({
+          includeUncontrolled: true
+      });
+
+      var instance = None;
+
+
+      // Let's see if we already have a window open:
+      for (const client of allClients) {
+          client.focus();
+          instance = client;
+          break;
+      }
+
+      // If we didn't find an existing window,
+      // open a new one:
+      if (!instance) {
+          instance = await clients.openWindow(rel_home);
+      }
+  }());
+});
