@@ -199,6 +199,7 @@ logout = function()
             // delete session:
             session_id = get_cookie("sessionid");
             set_cookie("sessionid", session_id, -100);
+            session_id = null;
         }
 
     }
@@ -278,16 +279,19 @@ b_match_invite.addEventListener("click", invite_player);
 
 reconnect();
 
-
-/*
-var websocket_connection = new WebsocketConnection('127.0.0.1', 5556);
-websocket_connection.connect();
-*/
-
-
 // register resize event:
 
 window.addEventListener("resize", function() {
     var tilesize = getComputedStyle(document.body).getPropertyValue("--tile-size");
     grid.on_screen_orientation_change(tilesize, tilesize);
-})
+});
+
+window.onload = function() { 
+    window.onfocus = function() {
+        if (session_id != null && connection == null)
+        {
+            reconnect();
+        }
+    };
+};
+

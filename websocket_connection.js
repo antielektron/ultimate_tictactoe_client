@@ -345,6 +345,11 @@ class WebsocketConnection
     }
 
     notify(text) {
+
+        if (document.hasFocus())
+        {
+            return;
+        }
         
         Notification.requestPermission(function(result) {
             if (result === 'granted') {
