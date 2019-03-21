@@ -57,7 +57,7 @@ b_match_invite = search_match_container.create_button("invite player");
 //status:
 status_container = main_menu.create_infocontainer();
 l_status_head = status_container.create_label("Status:");
-l_status = status_container.create_label("select gamemode. <br> <a href=https://en.wikipedia.org/wiki/Ultimate_tic-tac-toe#Rules>here are the rules </a>");
+l_status = status_container.create_label("select gamemode. click <br> <a href=https://en.wikipedia.org/wiki/Ultimate_tic-tac-toe#Rules>[here]</a> for the rules!");
 
 // global vars:
 
