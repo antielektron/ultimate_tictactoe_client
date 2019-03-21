@@ -39,5 +39,5 @@ self.addEventListener('fetch', function (event) {
 
 self.addEventListener('notificationclick', function (event) {
   event.notification.close();
-  clients.openWindow(rel_home);
+  clients.openWindow(home);
 });

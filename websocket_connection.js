@@ -182,6 +182,10 @@ class WebsocketConnection
                 if (!match_state.game_over)
                 {
                     this.openmatches[id] = new OnlineMatchManager(this.grid, this.status_label, this.matches_container, this.control_container, this, id, match_state, this.player.get_name());
+                    if (match_state.last_move == null)
+                    {
+                        this.notify("new Game against " + this.openmatches[id].online_opponent.get_name());
+                    }
                 }
                 
             }

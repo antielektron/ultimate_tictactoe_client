@@ -28,11 +28,6 @@ class OnlineMatchManager
 
         this.match_button.className = "infobar-button-active";
 
-        if (this.match_state.active_player == this.local_player.get_name())
-        {
-            this.game_server_connection.notify("your turn against " + this.online_opponent.get_name());
-        }
-
         this.is_closed = false;
 
     }
