@@ -64,7 +64,7 @@ class WebsocketConnection
         this.relogin(session_id);
     }
 
-    on_close()
+    on_close(login_failed=false)
     {
         var login_failed = !this.registered;
         this.registered = false;

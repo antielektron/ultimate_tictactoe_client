@@ -33,7 +33,7 @@ class LocalMatchManager
         else if (grid.is_complete())
         {
             this.status_label.innerHTML = "Draw. Everybody looses!";
-            this.end_game();
+            this.end_game(false);
         }
         else
         {
@@ -59,9 +59,12 @@ class LocalMatchManager
         this.grid.player_change_listener(next_player);
     }
 
-    end_game()
+    end_game(closed_by_player = true)
     {
-        this.status_label.innerHTML = "Game Over. Game Closed";
+        if (closed_by_player)
+        {
+            this.status_label.innerHTML = "Game Over. Game Closed";
+        }
         this.grid.block_all();
     }
 

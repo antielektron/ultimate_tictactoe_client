@@ -90,7 +90,7 @@ class Grid
 
     check_complete(sub_x, sub_y, x, y)
     {
-        if (this.subgrids[sub_x][sub_y].is_won() || this.subgrids[sub_x][sub_y].is_draw())
+        if (this.subgrids[sub_y][sub_x].is_won() || this.subgrids[sub_y][sub_x].is_draw())
         {
             this.n_complete_subgrids++;
         }
