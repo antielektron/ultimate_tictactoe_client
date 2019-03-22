@@ -26,7 +26,14 @@ class OnlineMatchManager
         this.match_button.addEventListener("click", () => this.open_match());
         this.match_button.style.background = "rbg(0,255,0)";
 
-        this.match_button.className = "infobar-button-active";
+        if (this.online_opponent.get_name() == this.match_state.active_player)
+        {
+            this.match_button.className = "infobar-button-red";
+        }
+        else
+        {
+            this.match_button.className = "infobar-button-green"
+        }
 
         this.is_closed = false;
 
@@ -68,11 +75,31 @@ class OnlineMatchManager
     update_match_state(match_state)
     {
         this.match_state = match_state;
-        this.match_button.className = "infobar-button-active";
+        
+        if (this.online_opponent.get_name() == this.match_state.active_player)
+        {
+            this.match_button.className = "infobar-button-red";
+        }
+        else
+        {
+            this.match_button.className = "infobar-button-green"
+        }
 
         if (this.match_state.active_player == this.local_player.get_name())
         {
             this.game_server_connection.notify("your turn against " + this.online_opponent.get_name());
+        }
+    }
+
+    on_focus_loose()
+    {
+        if (this.online_opponent.get_name() == this.match_state.active_player)
+        {
+            this.match_button.className = "infobar-button-red";
+        }
+        else
+        {
+            this.match_button.className = "infobar-button-green"
         }
     }
 
@@ -83,7 +110,7 @@ class OnlineMatchManager
         this.grid.deactivate_all();
         this.grid.unblock_all();
 
-        this.match_button.className = "infobar-button";
+        this.match_button.className = "infobar-button-active";
 
         this.game_server_connection.set_active_match(this.match_id);
 
@@ -160,7 +187,14 @@ class OnlineMatchManager
         }
         else if(game_over)
         {
-            this.status_label.innerHTML = "Game was closed by server or opponent";
+            if (this.grid.is_complete())
+            {
+                this.status_label.innerHTML = "Draw. Everyone looses!";
+            }
+            else
+            {
+                this.status_label.innerHTML = "Game was closed by server or opponent";
+            }
             return;
         }
 

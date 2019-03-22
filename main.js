@@ -37,11 +37,11 @@ b_logout = logout_container.create_button("logout");
 
 // match control
 match_control = sub_menu.create_infocontainer();
-b_end_game = match_control.create_button("End Game");
+b_end_game = match_control.create_button("Close Match");
 
 // fill subcontainer:
 match_slot_container = sub_menu.create_infocontainer();
-match_slot_container.create_label("online matches");
+match_slot_container.create_label("Running Matches<br>(click to open)");
 
 // search match:
 search_match_container = main_menu.create_infocontainer();
@@ -58,6 +58,7 @@ b_match_invite = search_match_container.create_button("invite player");
 status_container = main_menu.create_infocontainer();
 l_status_head = status_container.create_label("Status:");
 l_status = status_container.create_label("select gamemode. click <br> <a href=https://en.wikipedia.org/wiki/Ultimate_tic-tac-toe#Rules>[here]</a> for the rules!");
+
 
 // global vars:
 

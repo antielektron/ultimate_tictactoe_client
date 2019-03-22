@@ -126,6 +126,14 @@ class WebsocketConnection
 
     set_active_match(id)
     {
+        for (var key in this.openmatches)
+        {
+            if (key == id)
+            {
+                continue;
+            }
+            this.openmatches[key].on_focus_loose();
+        }
         this.active_match = id;
     }
 
@@ -243,6 +251,11 @@ class WebsocketConnection
 
     reconnect(session_id)
     {
+        for (var key in this.openmatches)
+        {
+            this.openmatches[key].remove_match();
+        }
+        this.openmatches = {};
         this.socket = new WebSocket(server_protocol + this.ip + ":" + this.port);
         this.socket.onmessage = (e => this.on_message(e));
         this.socket.onopen = (() => this.on_reopen(session_id));
