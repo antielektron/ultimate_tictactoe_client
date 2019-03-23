@@ -24,10 +24,11 @@ b_local_game = create_game_container.create_button("Local Game");
 
 // register container:
 register_container = main_menu.create_infocontainer();
-register_container.create_label("Register or login to play online");
+register_container.create_label("Login to play online");
 i_register_username = register_container.create_input("username");
 i_register_pw = register_container.create_input("password", true);
 b_register = register_container.create_button("register/login");
+register_container.create_label("(creates new account for a new username)");
 
 // logout:
 logout_container = sub_menu.create_infocontainer();
@@ -239,7 +240,7 @@ login = function(){
         connection.close();
     }
     connection = new WebsocketConnection(server_url, server_port, grid, l_status, match_slot_container, match_control, login_callback, on_connection_error);
-    connection.connect(i_register_username.value, i_register_pw.value);
+    connection.connect(i_register_username.value.toLowerCase(), i_register_pw.value);
 }
 
 search_match = function()
