@@ -70,7 +70,7 @@ a:visited {
 
     .main-container {
         white-space: normal;
-        padding-top: calc(50vh - 0.5 * var(--board-size) - var(--sidebar-height) - 2 * var(--button-margin));
+        padding-top: 0;
     }
 
 }
@@ -149,6 +149,8 @@ a:visited {
     .infobar-container {
         flex-direction:row;
         padding: none;
+        min-height: var(--sidebar-height);
+        height: calc((100vh - var(--board-size)) * 0.5 - 2* var(--border-radius));
     }
 
 }
