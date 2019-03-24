@@ -293,14 +293,13 @@ class WebsocketConnection
         for (i = 0; i < n; i++)
         {
             var tmp = this.search_container.create_double_button("" + this.friends[i], "-");
-            var name = this.friends[i];
             
             tmp[1].addEventListener("click", () => {
-                this.send_match_request(name);
+                this.send_match_request("" +this.friends[i]);
             });
 
             tmp[2].addEventListener("click", () => {
-                this.send_unfriend_request(name);
+                this.send_unfriend_request("" +this.friends[i]);
             });
 
             this.friend_name_divs.push(tmp[0])
