@@ -90,7 +90,7 @@ class OnlineMatchManager
     {
         if (this.match_button_div != null)
         {
-            clearInner(this.match_button_div)
+            clearInner(this.match_button_div);
             this.matches_container.container.removeChild(this.match_button_div);
             this.match_button_div = null;
         }

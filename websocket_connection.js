@@ -64,18 +64,40 @@ class WebsocketConnection
 
     on_open(username, pw)
     {
+
         this.connected = true;
         this.login(username, pw)
     }
 
     on_reopen(session_id)
     {
+
         this.connected = true;
         this.relogin(session_id);
     }
 
     on_close(login_failed=false)
     {
+        for (var key in this.openmatches)
+        {
+            this.openmatches[key].remove_match();
+        }
+        this.openmatches = {};
+        
+        // remove complete friend list:
+        var n = this.friend_name_divs.length;
+
+        var i;
+
+        for (i = 0; i < n; i++)
+        {
+            clearInner(this.friend_name_divs[i]);
+            this.search_container.container.removeChild(this.friend_name_divs[i]);
+            this.friend_name_divs[i] = null;
+        }
+        this.friend_name_divs = [];
+        this.friends = [];
+
         var login_failed = !this.registered;
         this.registered = false;
         this.connected = false;
@@ -89,6 +111,26 @@ class WebsocketConnection
 
     on_error()
     {
+        for (var key in this.openmatches)
+        {
+            this.openmatches[key].remove_match();
+        }
+        this.openmatches = {};
+
+        // remove complete friend list:
+        var n = this.friend_name_divs.length;
+
+        var i;
+
+        for (i = 0; i < n; i++)
+        {
+            clearInner(this.friend_name_divs[i]);
+            this.search_container.container.removeChild(this.friend_name_divs[i]);
+            this.friend_name_divs[i] = null;
+        }
+        this.friend_name_divs = [];
+        this.friends = [];
+
         console.log("error in websocket connection");
         this.registered = false;
         this.connected = false;
@@ -449,11 +491,6 @@ class WebsocketConnection
 
     close()
     {
-        for (var key in this.openmatches)
-        {
-            this.openmatches[key].remove_match();
-        }
-        this.openmatches = {};
         this.status_label.innerHTML = "logged out";
         this.closed_by_user = true;
         this.socket.close();
