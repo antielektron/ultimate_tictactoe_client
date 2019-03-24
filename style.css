@@ -4,7 +4,7 @@ html, body {
 
 body { 
     margin: 0;
-    background: rgb(30, 36, 119) ;
+    background: rgb(49, 54, 74) ;
     outline: 0;
     position: relative;
 }
@@ -15,21 +15,36 @@ body {
     --tile-size: calc((100vh / (var(--tictactoe_n) * var(--tictactoe_n))) - 2 * var(--button-margin));
     --opacity: 1;
     --border-radius: 1vh;
-    --sidebar-width: 25vh;
-    --ground-color: rgb(30, 36, 119) ;
+    --sidebar-width: 26vh;
+    --ground-color: rgb(41, 45, 62) ;
     --board-size: calc(var(--tictactoe_n) * var(--tictactoe_n) * var(--tile-size) + (var(--tictactoe_n) * var(--tictactoe_n) + var(--tictactoe_n)) * var(--button-margin) );
     --sidebar-height: calc(var(--board-size) - 2 * var(--border-radius));
 }
 
 /* override settings on portrait mode: */
-@media (orientation: portrait) {
+@media (max-aspect-ratio: 16/10) {
+
+    :root{
+        --button-margin: 0.35vh;
+        --tile-size: calc(((70vh / (var(--tictactoe_n) * var(--tictactoe_n))) - 2 * var(--button-margin)));
+        --border-radius: 0.7vh;
+        --sidebar-width: 18.2vh;
+        --board-size: calc((var(--tictactoe_n) * var(--tictactoe_n) * var(--tile-size) + (var(--tictactoe_n) * var(--tictactoe_n) + var(--tictactoe_n)) * var(--button-margin)));
+        --sidebar-height: calc(var(--board-size) - 2 * var(--border-radius));
+    }
+
+}
+
+/* override settings on portrait mode: */
+@media (max-aspect-ratio: 1/1) {
 
     :root{
         --button-margin: 0.5vw;
-        --tile-size: calc((100vw / (var(--tictactoe_n) * var(--tictactoe_n))) - 2 * var(--button-margin));
+        --tile-size: calc(((100vw / (var(--tictactoe_n) * var(--tictactoe_n))) - 2 * var(--button-margin)));
         --border-radius: 1vw;
+        --board-size: calc(var(--tictactoe_n) * var(--tictactoe_n) * var(--tile-size) + (var(--tictactoe_n) * var(--tictactoe_n) + var(--tictactoe_n)) * var(--button-margin) );
         --sidebar-width: calc(var(--board-size) - 2 * var(--border-radius));
-        --sidebar-height: 15vw;
+        --sidebar-height: 25vw;
     }
 
 }
@@ -51,11 +66,11 @@ a:visited {
 }
 
 /* override settings on portrait mode: */
-@media (orientation: portrait) {
+@media (max-aspect-ratio: 1/1) {
 
     .main-container {
         white-space: normal;
-        padding-top: calc(50vh - 0.5 * var(--board-size));
+        padding-top: 0;
     }
 
 }
@@ -114,11 +129,11 @@ a:visited {
     transition-duration: 0.5s;
 }
 
-.sidebar-container {
+.infobar-container {
     border-radius: var(--border-radius);
     padding: var(--border-radius);
     vertical-align: top;
-    background: rgba(255, 255, 255, 0.05);
+    background: none;
     display: inline-flex;
     justify-content: space-between;
     flex-direction:column;
@@ -129,42 +144,15 @@ a:visited {
 }
 
 /* override settings on portrait mode: */
-@media (orientation: portrait) {
+@media (max-aspect-ratio: 1/1) {
 
-    .sidebar-container {
+    .infobar-container {
         flex-direction:row;
         padding: none;
+        min-height: var(--sidebar-height);
+        height: calc((100vh - var(--board-size)) * 0.5 - 2* var(--border-radius));
     }
 
-}
-
-.create-game-container {
-    border-radius: var(--border-radius);
-    padding: var(--border-radius);
-    top: 0;
-    background: none;
-    display: inline-block;
-    vertical-align: middle;
-}
-
-
-.control-container {
-    border-radius: var(--border-radius);
-    padding: var(--border-radius);
-    top: 0;
-    background: none;
-    display: inline-block;
-    vertical-align: middle;
-}
-
-
-.setting-container {
-    border-radius: var(--border-radius);
-    padding: var(--border-radius);
-    top: 0;
-    background: none;
-    display: inline-block;
-    vertical-align: middle;
 }
 
 .info-container {
@@ -176,78 +164,183 @@ a:visited {
     text-align: center;
     background: none;
     white-space: normal;
+    overflow-y: scroll;
 }
 
-.sidebar-label {
-    color: white;
-    display: flex;
-    flex-direction: column;
+@media (max-aspect-ratio: 1/1) {
+
+    .info-container{
+        width: calc(0.3 * var(--sidebar-width));
+    }
+}
+
+.infobar-label {
+    color: rgba(224, 217, 235, 0.8);
     font-size: calc(2 * var(--border-radius));
-    width: calc(var(--sidebar-width) - 4 * var(--border-radius));
-    text-align: left;
-}
-
-@media (orientation: portrait) {
-    .sidebar-label
-    {
-        width: calc(var(--sidebar-width) * 0.3);
-    }
-}
-
-.sidebar-button {
-    border-radius: var(--border-radius);
-    margin: var(--border-radius);
-    border: none;
-    outline: 0;
-    transition-duration: 0.3s;
-    background: rgba(0, 0, 0, 0.5);
-    color: rgb(255, 255, 255);
-    font-size: calc(3 * var(--border-radius));
-    height: calc(4 * var(--border-radius));
-    width: calc(var(--sidebar-width) - 4 * var(--border-radius));
-    vertical-align: middle;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
     display: flex;
     flex-direction: column;
+    text-align: center;
+
 }
 
-@media (orientation: portrait) {
-
-    .sidebar-button{
-        width: calc(0.25 * var(--sidebar-width));
-        height: calc(0.3 * var(--sidebar-height));
-    }
+.option-button-container
+{
+    border-radius: 0%;
+    margin: 0%;
+    top: 0%;
+    display: flex;
+    flex-direction:row;
+    padding: none;
 }
 
 
-.sidebar-button:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
 
-.sidebar-button:active {
-    background: rgba(255, 255, 255, 0.4);
-}
 
-.sidebar-input {
+.infobar-button {
     border-radius: var(--border-radius);
     margin: var(--border-radius);
     border: none;
     outline: 0;
     transition-duration: 0.3s;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(126,87,194, 0.2) ;
     color: rgb(255, 255, 255);
-    font-size: calc(3 * var(--border-radius));
+    font-size: calc(2.8 * var(--border-radius));
     height: calc(4 * var(--border-radius));
-    width: calc(var(--sidebar-width) - 4 * var(--border-radius));
-    vertical-align: middle;
+    /* width: calc(var(--sidebar-width) - 4 * var(--border-radius)); */
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
     display: flex;
+    vertical-align: middle;
     flex-direction: column;
     text-align: center;
 }
 
-@media (orientation: portrait) {
+@media (max-aspect-ratio: 1/1) {
 
-    .sidebar-input{
-        height: calc(0.3 * var(--sidebar-height));
-        width: calc(0.25 * var(--sidebar-width));
+    .infobar-button{
+        height: calc(0.18 * var(--sidebar-height));
+    }
+}
+
+.infobar-button-green {
+    border-radius: var(--border-radius);
+    margin: var(--border-radius);
+    border: none;
+    outline: 0;
+    transition-duration: 0.3s;
+    background: rgba(0, 255, 0, 0.2);
+    color: rgb(255, 255, 255);
+    font-size: calc(2.8 * var(--border-radius));
+    height: calc(4 * var(--border-radius));
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+    display: flex;
+    vertical-align: middle;
+    flex-direction: column;
+}
+
+@media (max-aspect-ratio: 1/1) {
+
+    .infobar-button-green{
+        height: calc(0.18 * var(--sidebar-height));
+    }
+}
+
+.infobar-button-red {
+    border-radius: var(--border-radius);
+    margin: var(--border-radius);
+    border: none;
+    outline: 0;
+    transition-duration: 0.3s;
+    background: rgba(255, 0, 0, 0.2);
+    color: rgb(255, 255, 255);
+    font-size: calc(2.8 * var(--border-radius));
+    height: calc(4 * var(--border-radius));
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+    display: flex;
+    vertical-align: middle;
+    flex-direction: column;
+}
+
+@media (max-aspect-ratio: 1/1) {
+
+    .infobar-button-red{
+        height: calc(0.18 * var(--sidebar-height));
+    }
+}
+
+.infobar-button-active {
+    border-radius: var(--border-radius);
+    margin: var(--border-radius);
+    border: none;
+    outline: 0;
+    transition-duration: 0.3s;
+    background: rgba(126,87,194, 0.8) ;
+    color: rgb(255, 255, 255);
+    font-size: calc(2.8 * var(--border-radius));
+    height: calc(4 * var(--border-radius));
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+    display: flex;
+    vertical-align: middle;
+    flex-direction: column;
+}
+
+@media (max-aspect-ratio: 1/1) {
+
+    .infobar-button-active{
+        height: calc(0.18 * var(--sidebar-height));
+    }
+}
+
+
+.infobar-button:hover {
+    background: rgba(126,87,194, 0.5);
+}
+
+.infobar-button:active {
+    background: rgba(126,87,194, 0.8);
+}
+
+.infobar-button:disabled {
+    background: rgba(0, 0, 0, 0.1);
+    color: rgb(64,64,64);
+}
+
+.infobar-input {
+    border-radius: var(--border-radius);
+    margin: var(--border-radius);
+    border: none;
+    outline: 0;
+    transition-duration: 0.3s;
+    background: rgba(126,87,194, 0.2);
+    color: rgb(255, 255, 255);
+    font-size: calc(3 * var(--border-radius));
+    height: calc(4 * var(--border-radius));
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+    display: flex;
+    vertical-align: middle;
+    flex-direction: column;
+    text-align: center;
+}
+
+.infobar-input::placeholder {
+    color: rgba(255,255,255,0.3);
+}
+
+@media (max-aspect-ratio: 1/1) {
+
+    .infobar-input{
+        height: calc(0.18 * var(--sidebar-height));
     }
 }

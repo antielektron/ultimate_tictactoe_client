@@ -1,15 +1,17 @@
 class Grid
 {
-    constructor(n, grid_container_div, tile_width, tile_height, ground_color)
+    constructor(n, parent, tile_width, tile_height, ground_color)
     {
         this.n = n;
-        this.grid_container_div = grid_container_div;
+        this.grid_container_div = null;
         this.tile_width = tile_width;
         this.tile_height = tile_height;
         this.ground_color = ground_color;
 
         this.won_player = null;
         this.n_complete_subgrids = 0;
+
+        this.parent = parent;
 
         this.subgrids = []
 
@@ -20,6 +22,10 @@ class Grid
 
     create()
     {
+        this.grid_container_div = document.createElement("div");
+        this.grid_container_div.className = "grid-container";
+        this.parent.appendChild(this.grid_container_div);
+
         var x,y;
         for (y = 0; y < this.n; y++)
         {
@@ -49,7 +55,10 @@ class Grid
     {
         this.check_win(sub_x, sub_y, x, y);
         this.check_complete(sub_x, sub_y, x, y);
-        this.click_callback(sub_x, sub_y, x, y); 
+        if (this.click_callback != null)
+        {
+            this.click_callback(sub_x, sub_y, x, y);
+        }
     }
 
     player_change_listener(player)
@@ -81,7 +90,7 @@ class Grid
 
     check_complete(sub_x, sub_y, x, y)
     {
-        if (this.subgrids[sub_x][sub_y].is_won() || this.subgrids[sub_x][sub_y].is_draw())
+        if (this.subgrids[sub_y][sub_x].is_won() || this.subgrids[sub_y][sub_x].is_draw())
         {
             this.n_complete_subgrids++;
         }
@@ -206,6 +215,22 @@ class Grid
         {
             for (x = 0; x < this.n; x++)
             {
+                this.subgrids[y][x].unblock();
+            }
+        }
+    }
+
+    unblock_all_non_completed()
+    {
+        var x,y;
+        for (y = 0; y < this.n; y++)
+        {
+            for (x = 0; x < this.n; x++)
+            {
+                if (this.subgrids[y][x].is_won() || this.subgrids[y][x].is_draw())
+                {
+                    continue;
+                }
                 this.subgrids[y][x].unblock();
             }
         }
