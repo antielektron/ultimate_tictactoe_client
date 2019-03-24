@@ -446,6 +446,7 @@ class WebsocketConnection
         {
             this.openmatches[key].remove_match();
         }
+        this.openmatches = {};
         this.status_label.innerHTML = "logged out";
         this.closed_by_user = true;
         this.socket.close();
