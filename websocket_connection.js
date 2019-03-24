@@ -293,18 +293,26 @@ class WebsocketConnection
         for (i = 0; i < n; i++)
         {
             var tmp = this.search_container.create_double_button("" + this.friends[i], "-");
+
+            tmp[1].name = this.friends[i];
+            tmp[2].name = this.friends[i];
+            tmp[1].connection = this;
+            tmp[2].connection = this;
             
-            tmp[1].addEventListener("click", () => {
-                this.send_match_request("" +this.friends[i]);
+            
+            tmp[1].addEventListener("click", function() {
+                this.connection.send_match_request(this.name);
             });
 
-            tmp[2].addEventListener("click", () => {
-                this.send_unfriend_request("" +this.friends[i]);
+            tmp[2].addEventListener("click", function (){
+                this.connection.send_unfriend_request(this.name);
             });
 
             this.friend_name_divs.push(tmp[0])
         }
     }
+
+
 
     connect(username, pw)
     {
