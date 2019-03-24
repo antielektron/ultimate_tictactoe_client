@@ -7,6 +7,7 @@ self.addEventListener('install', function (e) {
     caches.open('your-magic-cache').then(function (cache) {
       return cache.addAll([
         '/website/ultimate_tictactoe/',
+        '/website/ultimate_tictactoe/tools.js',
         '/website/ultimate_tictactoe/index.html',
         '/website/ultimate_tictactoe/manifest.json',
         '/website/ultimate_tictactoe/icon.png',

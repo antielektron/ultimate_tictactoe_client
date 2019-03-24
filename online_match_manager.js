@@ -21,10 +21,27 @@ class OnlineMatchManager
 
         // create match button in match list:
         this.control_container = control_container;
-        this.matches_container = matches_container
-        this.match_button = matches_container.create_button("" + this.online_opponent.get_name());
+        this.matches_container = matches_container;
+
+        var tmp = matches_container.create_double_button("" + this.online_opponent.get_name(), "+")
+
+        this.match_button = tmp[1];
+        this.match_button_div = tmp[0];
+        this.match_button_option = tmp[2];
+
+        if (this.game_server_connection.is_friend(this.online_opponent.get_name()))
+        {
+            this.match_button_option.disabled = true;
+        }
+        else
+        {
+            this.match_button_option.addEventListener("click", () => {
+                this.game_server_connection.send_friend_request(this.online_opponent.get_name());
+                this.match_button_option.disabled = true;
+            });
+        }
+
         this.match_button.addEventListener("click", () => this.open_match());
-        this.match_button.style.background = "rbg(0,255,0)";
 
         if (this.online_opponent.get_name() == this.match_state.active_player)
         {
@@ -57,7 +74,12 @@ class OnlineMatchManager
             this.game_server_connection.send_end_match(this.match_id);
         }
 
-        this.matches_container.container.removeChild(this.match_button);
+        if (this.match_button_div != null)
+        {
+            clearInner(this.match_button_div)
+            this.matches_container.container.removeChild(this.match_button_div);
+            this.match_button_div = null;
+        }
         this.status_label.innerHTML = "match is closed";
         this.control_container.hide();
         this.is_closed = true;
@@ -66,9 +88,11 @@ class OnlineMatchManager
 
     remove_match()
     {
-        if (!this.is_closed)
+        if (this.match_button_div != null)
         {
-            this.matches_container.container.removeChild(this.match_button);
+            clearInner(this.match_button_div)
+            this.matches_container.container.removeChild(this.match_button_div);
+            this.match_button_div = null;
         }
     }
 

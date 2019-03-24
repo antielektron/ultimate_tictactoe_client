@@ -37,6 +37,33 @@ class Infocontainer
         return l;
     }
 
+    create_double_button(text, option)
+    {
+        var div = document.createElement("div");
+        div.className = "option-button-container";
+        var b1 = document.createElement("button");
+        var b2 = document.createElement("button");
+
+        b1.style.width = "10%";
+
+        b1.className = "infobar-button";
+        b2.className = "infobar-button";
+
+        b1.style.width = "80%";
+        b2.style.width = "20%";
+        
+
+        b1.appendChild(document.createTextNode(text));
+        b2.appendChild(document.createTextNode(option));
+
+        div.appendChild(b1);
+        div.appendChild(b2);
+
+        this.container.appendChild(div);
+
+        return [div, b1,b2];
+    }
+
     hide()
     {
         this.container.style.display = "none";

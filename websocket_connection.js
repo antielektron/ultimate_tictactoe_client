@@ -1,6 +1,6 @@
 class WebsocketConnection
 {
-    constructor(ip, port, grid, status_label, matches_container, control_container, login_callback_func, error_callback_func)
+    constructor(ip, port, grid, status_label, matches_container, control_container, search_container, login_callback_func, error_callback_func)
     {
         this.ip = ip;
         this.port = port;
@@ -13,6 +13,7 @@ class WebsocketConnection
         this.status_label = status_label;
         this.matches_container = matches_container;
         this.control_container = control_container;
+        this.search_container  = search_container;
 
         this.active_match = null;
 
@@ -27,8 +28,12 @@ class WebsocketConnection
 
         this.closed_by_user = false;
 
-        matches_container.hide();
 
+        this.friends = [];
+
+        this.friend_name_divs = [];
+
+        matches_container.hide();
 
     }
 
@@ -50,6 +55,11 @@ class WebsocketConnection
     is_connected()
     {
         return this.connected;
+    }
+
+    is_friend(friend)
+    {
+        return this.friends.includes(friend);
     }
 
     on_open(username, pw)
@@ -119,6 +129,18 @@ class WebsocketConnection
             
             case "match_request_response":
                 this.on_match_request_response(msg.data);
+                break;
+            
+            case "friend_request_response":
+                this.on_friend_request_response(msg.data);
+                break;
+            
+            case "unfriend_request_response":
+                this.on_unfriend_request_response(msg.data);
+                break;
+            
+            case "friends_update":
+                this.on_friends_update(msg.data);
                 break;
         }
 
@@ -239,6 +261,51 @@ class WebsocketConnection
         }
     }
 
+    on_friend_request_response(data)
+    {
+        this.status_label.innerHTML = data.msg;
+    }
+
+    on_unfriend_request_response(data)
+    {
+        this.status_label.innerHTML = data.msg;
+    }
+
+    on_friends_update(data)
+    {
+        this.friends = data.friends;
+
+        // remove complete friend list:
+        var n = this.friend_name_divs.length;
+
+        var i;
+
+        for (i = 0; i < n; i++)
+        {
+            clearInner(this.friend_name_divs[i]);
+            this.search_container.container.removeChild(this.friend_name_divs[i]);
+            this.friend_name_divs[i] = null;
+        }
+        this.friend_name_divs = [];
+        // rebuild friend list:
+        n = this.friends.length;
+        
+        for (i = 0; i < n; i++)
+        {
+            var tmp = this.search_container.create_double_button("" + this.friends[i], "-");
+            var name = this.friends[i];
+            
+            tmp[1].addEventListener("click", () => {
+                this.send_match_request(name);
+            });
+
+            tmp[2].addEventListener("click", () => {
+                this.send_unfriend_request(name);
+            });
+
+            this.friend_name_divs.push(tmp[0])
+        }
+    }
 
     connect(username, pw)
     {
@@ -303,6 +370,28 @@ class WebsocketConnection
         this.socket.send(JSON.stringify(msg_object));
     }
 
+    send_friend_request(friend_name)
+    {
+        var msg_object = {
+            type: "friend_request",
+            data: {
+                user: friend_name
+            }
+        };
+        this.socket.send(JSON.stringify(msg_object));
+    }
+
+    send_unfriend_request(friend_name)
+    {
+        var msg_object = {
+            type: "unfriend_request",
+            data: {
+                user: friend_name
+            }
+        };
+        this.socket.send(JSON.stringify(msg_object));
+    }
+
     login(username, pw)
     {
         this.player.set_name(username);
@@ -320,6 +409,10 @@ class WebsocketConnection
 
     relogin(session_id)
     {
+        for (var key in this.openmatches)
+        {
+            this.openmatches[key].remove_match();
+        }
         // register for game queue
         var msg_object = {
             type: "reconnect",

@@ -22,36 +22,41 @@ create_game_container = main_menu.create_infocontainer();
 create_game_container.create_label("Start Local Game");
 b_local_game = create_game_container.create_button("Local Game");
 
+
+
 // register container:
 register_container = main_menu.create_infocontainer();
 register_container.create_label("Login to play online");
 i_register_username = register_container.create_input("username");
 i_register_pw = register_container.create_input("password", true);
 b_register = register_container.create_button("register/login");
-register_container.create_label("(creates new account for a new username)");
+//register_container.create_label("(creates new account for a new username)");
 
 // logout:
-logout_container = sub_menu.create_infocontainer();
+logout_container = main_menu.create_infocontainer();
 l_username = logout_container.create_label("logged in as: ");
 b_logout = logout_container.create_button("logout");
 
-
-// match control
-match_control = sub_menu.create_infocontainer();
-b_end_game = match_control.create_button("Close Match");
 
 // fill subcontainer:
 match_slot_container = sub_menu.create_infocontainer();
 match_slot_container.create_label("Running Matches<br>(click to open)");
 
+
+// local match control:
+match_control = sub_menu.create_infocontainer();
+b_end_game = match_control.create_button("Close Match");
+
+
 // search match:
-search_match_container = main_menu.create_infocontainer();
+search_match_container = sub_menu.create_infocontainer();
 search_match_container.create_label("Create Online Match");
 b_match_search = search_match_container.create_button("random match");
-search_match_container.create_label("<p> </p>");
 
 l_match_op = search_match_container.create_input("player name");
 b_match_invite = search_match_container.create_button("invite player");
+
+search_match_container.create_label("Invite friends:")
 
 
 
@@ -222,7 +227,7 @@ reconnect = function()
         {
             connection.close();
         }
-        connection = new WebsocketConnection(server_url, server_port, grid, l_status, match_slot_container, match_control, login_callback, on_connection_error);
+        connection = new WebsocketConnection(server_url, server_port, grid, l_status, match_slot_container, match_control, search_match_container, login_callback, on_connection_error);
         connection.reconnect(session_id);
     }
 }
@@ -239,7 +244,7 @@ login = function(){
     {
         connection.close();
     }
-    connection = new WebsocketConnection(server_url, server_port, grid, l_status, match_slot_container, match_control, login_callback, on_connection_error);
+    connection = new WebsocketConnection(server_url, server_port, grid, l_status, match_slot_container, match_control, search_match_container, login_callback, on_connection_error);
     connection.connect(i_register_username.value.toLowerCase(), i_register_pw.value);
 }
 
@@ -265,6 +270,8 @@ invite_player = function()
         }
     }
 }
+
+
 
 // initiate stuff and connect events:
 
