@@ -1,3 +1,3 @@
 # ultimate_tictactoe
 
-simple ultimate tic-tac-toe implementation
+A simple ultimate tic-tac-toe client for the [ultimate TicTacToe python server](https://github.com/antielektron/ultimate_tictactoe_server).
