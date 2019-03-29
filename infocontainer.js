@@ -90,6 +90,12 @@ class Infocontainer
         b1.style.width = "80%";
         b2.style.width = "20%";
 
+        b2.style.marginLeft = "2%";
+        b1.style.marginTop = "1%";
+        b2.style.marginTop = "1%";
+        b1.style.marginBottom = "1%";
+        b2.style.marginBottom = "1%";
+
         b1.innerHTML = "<span>" + text + "</span>"
         b2.appendChild(document.createTextNode(option));
 
