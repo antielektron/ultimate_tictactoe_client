@@ -314,7 +314,7 @@ show_highscores = function()
                 {
                     name=name.substring(0,10) + "…";
                 }
-                new_text += "\#" + (i+1) + ": " + " [" + encodeHTML("" + connection.top_elos[i]) + "]" + encodeHTML(name) + "<br>";
+                new_text += "<nobr>\#" + (i+1) + ": " + encodeHTML("" + connection.top_elos[i]) + " - " + encodeHTML(name) + "</nobr><br>";
             }
 
             l_highscores.innerHTML = new_text;
