@@ -2,11 +2,19 @@ html, body {
     overflow-x: hidden;
 }
 
+input, body, button, textarea{
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
 body { 
     margin: 0;
     background: rgb(49, 54, 74) ;
     outline: 0;
     position: relative;
+}
+
+small {
+    font-size: x-small;
 }
 
 :root{
@@ -156,14 +164,15 @@ a:visited {
 }
 
 .info-container {
-    border-radius: var(--border-radius);
-    padding: var(--border-radius);
+    border-radius: var(--button-margin);
+    padding: var(--button-margin);
     bottom: 0;
     display: inline-block;
     vertical-align: middle;
     text-align: center;
-    background: none;
+    background: rgba(0,0,0,0);
     white-space: normal;
+    transition-duration: 0.3s;
     overflow-y: auto;
 }
 
@@ -177,6 +186,18 @@ a:visited {
 .infobar-label {
     color: rgba(224, 217, 235, 0.8);
     font-size: calc(2 * var(--border-radius));
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+
+}
+
+.infobar-head-label {
+    color: rgba(224, 217, 235, 0.8);
+    font-size: calc(2.5 * var(--border-radius));
     margin-left: 0;
     margin-right: 0;
     width: 100%;
@@ -200,8 +221,9 @@ a:visited {
 
 
 .infobar-button {
-    border-radius: var(--border-radius);
-    margin: var(--border-radius);
+    border-radius: var(--button-margin);
+    margin: var(--button-margin);
+    padding-top: 1%;
     border: none;
     outline: 0;
     transition-duration: 0.3s;
@@ -217,18 +239,21 @@ a:visited {
     vertical-align: middle;
     flex-direction: column;
     text-align: center;
+    overflow-x: auto;
 }
 
 @media (max-aspect-ratio: 1/1) {
 
     .infobar-button{
+        padding-top: 2%;
         height: calc(0.18 * var(--sidebar-height));
     }
 }
 
 .infobar-button-green {
-    border-radius: var(--border-radius);
-    margin: var(--border-radius);
+    border-radius: var(--button-margin);
+    margin: var(--button-margin);
+    padding-top: 1%;
     border: none;
     outline: 0;
     transition-duration: 0.3s;
@@ -242,18 +267,21 @@ a:visited {
     display: flex;
     vertical-align: middle;
     flex-direction: column;
+    overflow-x: auto;
 }
 
 @media (max-aspect-ratio: 1/1) {
 
     .infobar-button-green{
+        padding-top: 2%;
         height: calc(0.18 * var(--sidebar-height));
     }
 }
 
 .infobar-button-red {
-    border-radius: var(--border-radius);
-    margin: var(--border-radius);
+    border-radius: var(--button-margin);
+    margin: var(--button-margin);
+    padding-top: 1%;
     border: none;
     outline: 0;
     transition-duration: 0.3s;
@@ -267,18 +295,21 @@ a:visited {
     display: flex;
     vertical-align: middle;
     flex-direction: column;
+    overflow-x: auto;
 }
 
 @media (max-aspect-ratio: 1/1) {
 
     .infobar-button-red{
+        padding-top: 2%;
         height: calc(0.18 * var(--sidebar-height));
     }
 }
 
 .infobar-button-active {
-    border-radius: var(--border-radius);
-    margin: var(--border-radius);
+    border-radius: var(--button-margin);
+    margin: var(--button-margin);
+    padding-top: 1%;
     border: none;
     outline: 0;
     transition-duration: 0.3s;
@@ -292,11 +323,13 @@ a:visited {
     display: flex;
     vertical-align: middle;
     flex-direction: column;
+    overflow-x: auto;
 }
 
 @media (max-aspect-ratio: 1/1) {
 
     .infobar-button-active{
+        padding-top: 2%;
         height: calc(0.18 * var(--sidebar-height));
     }
 }
@@ -316,8 +349,8 @@ a:visited {
 }
 
 .infobar-input {
-    border-radius: var(--border-radius);
-    margin: var(--border-radius);
+    border-radius: var(--button-margin);
+    margin: var(--button-margin);
     border: none;
     outline: 0;
     transition-duration: 0.3s;

@@ -37,6 +37,11 @@ class Player
         return "rgb(" + this.r + "," + this.g + "," + this.b + ")";
     }
 
+    get_color_with_alpha(alpha)
+    {
+        return "rgba(" + this.r + "," + this.g + "," + this.b + "," + alpha + ")";
+    }
+
     get_color_values()
     {
         var col = {

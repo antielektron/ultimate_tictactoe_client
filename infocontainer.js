@@ -1,18 +1,56 @@
 class Infocontainer
 {
-    constructor(parent)
+    constructor(parent, heading_text=null)
     {
         this.parent = parent;
         this.container = document.createElement("div");
         this.container.className = "info-container";
         this.parent.appendChild(this.container);
+        this.head_elem = null;
+        this.timeout_id = null;
+
+        if (heading_text != null)
+        {
+            this.head_elem = document.createElement("label");
+            this.head_elem.className = "infobar-head-label";
+            this.head_elem.innerHTML = heading_text;
+            this.container.appendChild(this.head_elem);
+        }
+
+    }
+
+    update_head(text)
+    {
+        if (this.head_elem == null)
+        {
+            console.warn("cannot update head text");
+            return;
+        }
+        this.head_elem.innerHTML = text;
+    }
+
+    set_background_color(color)
+    {
+        this.container.style.backgroundColor = color;
+    }
+
+    clear_background_color()
+    {
+        this.container.style.backgroundColor = null;
+    }
+
+    blink(color, time = 500)
+    {
+        this.set_background_color(color);
+        this.timeout_id = setTimeout(c => this.clear_background_color(), time);
+
     }
 
     create_button(text)
     {
         var b = document.createElement("button");
         b.className = "infobar-button";
-        b.appendChild(document.createTextNode(text));
+        b.innerHTML = text;
         this.container.appendChild(b)
         return b;
     }
@@ -51,9 +89,8 @@ class Infocontainer
 
         b1.style.width = "80%";
         b2.style.width = "20%";
-        
 
-        b1.appendChild(document.createTextNode(text));
+        b1.innerHTML = "<span>" + text + "</span>"
         b2.appendChild(document.createTextNode(option));
 
         div.appendChild(b1);

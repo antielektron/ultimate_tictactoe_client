@@ -6,9 +6,9 @@ var ground_color = style.getPropertyValue("--ground-color");
 var main_container = document.getElementById("main-container");
 
 
-var main_menu = new Infobar(main_container);
+var main_menu = new Infobar(main_container, "infobar-container");
 var grid = new Grid(n, main_container, tilesize, tilesize, ground_color);
-var sub_menu = new Infobar(main_container);
+var sub_menu = new Infobar(main_container, "infobar-container");
 
 
 // fill containers with buttons and containers:
@@ -18,41 +18,37 @@ dummy_main = main_menu.create_infocontainer();
 dummy_sub = sub_menu.create_infocontainer();
 
 // start container:
-create_game_container = main_menu.create_infocontainer();
-create_game_container.create_label("Start Local Game");
+create_game_container = main_menu.create_infocontainer("Start Local Game");
 b_local_game = create_game_container.create_button("Local Game");
 
 
 
 // register container:
-register_container = main_menu.create_infocontainer();
-register_container.create_label("Login to play online");
+register_container = main_menu.create_infocontainer("Login to play online");
 i_register_username = register_container.create_input("username");
 i_register_pw = register_container.create_input("password", true);
 b_register = register_container.create_button("register/login");
 //register_container.create_label("(creates new account for a new username)");
 
 // logout:
-logout_container = main_menu.create_infocontainer();
-l_username = logout_container.create_label("logged in as: ");
+logout_container = main_menu.create_infocontainer("logged in as: ");
 b_logout = logout_container.create_button("logout");
 
 
 // fill subcontainer:
-match_slot_container = sub_menu.create_infocontainer();
-match_slot_container.create_label("Running Matches<br>(click to open)");
+match_slot_container = sub_menu.create_infocontainer("Running Matches<br>(click to open)");
 
 
-// local match control:
-match_control = sub_menu.create_infocontainer();
+// match control:
+match_control = sub_menu.create_infocontainer(" -- vs. --");
 b_end_game = match_control.create_button("Close Match");
 
 
-// search match:
-search_match_container = sub_menu.create_infocontainer();
-search_match_container.create_label("Create Online Match");
-b_match_search = search_match_container.create_button("random match");
 
+// search match:
+search_match_container = sub_menu.create_infocontainer("Create Online Match");
+b_match_search = search_match_container.create_button("random match");
+search_match_container.create_label("invite player by name:");
 l_match_op = search_match_container.create_input("player name");
 b_match_invite = search_match_container.create_button("invite player");
 
@@ -61,9 +57,9 @@ search_match_container.create_label("Invite friends:")
 
 
 //status:
-status_container = main_menu.create_infocontainer();
-l_status_head = status_container.create_label("Status:");
-l_status = status_container.create_label("select gamemode. click <br> <a href=https://en.wikipedia.org/wiki/Ultimate_tic-tac-toe#Rules>[here]</a> for the rules!");
+status_container = main_menu.create_infocontainer("Status");
+l_status = status_container.create_label("");
+
 
 
 // global vars:
@@ -109,7 +105,27 @@ function check_cookie(cname) {
     return false;
 }
 
+status_message = function(text, blink = true)
+{
+    l_status.innerHTML = text;
+    if (blink)
+    {
+        status_container.blink("rgba(126,87,194, 0.5)");
+    }
+}
 
+status_error = function(text, blink=true)
+{
+    l_status.innerHTML = text;
+    if (blink)
+    {
+        status_container.blink("rgba(128,0,0,0.5");
+    }
+}
+
+
+
+status_message("select gamemode. click <br> <a href=https://en.wikipedia.org/wiki/Ultimate_tic-tac-toe#Rules>[here]</a> for the rules!");
 
 
 // global funcs:
@@ -172,6 +188,8 @@ start_local_game = function()
 
     status_container.show();
 
+    b_end_game.innerHTML="Close Match";
+
     game_manager = new LocalMatchManager(grid, l_status, match_control, end_local_game);
 
 }
@@ -188,7 +206,8 @@ login_callback = function()
         
     }
     end_local_game();
-    l_username.innerHTML = "logged in as: " + connection.player.get_name();
+    logout_container.update_head("logged in as: " + connection.player.get_name());
+    //logout_container.blink("rgba(128,128,128,0.5)");
 
     set_cookie("sessionid", connection.session_id, 30);
 
@@ -227,7 +246,7 @@ reconnect = function()
         {
             connection.close();
         }
-        connection = new WebsocketConnection(server_url, server_port, grid, l_status, match_slot_container, match_control, search_match_container, login_callback, on_connection_error);
+        connection = new WebsocketConnection(server_url, server_port, grid, status_message, status_error, match_slot_container, match_control, b_end_game, logout_container, search_match_container, login_callback, on_connection_error);
         connection.reconnect(session_id);
     }
 }
@@ -244,7 +263,7 @@ login = function(){
     {
         connection.close();
     }
-    connection = new WebsocketConnection(server_url, server_port, grid, l_status, match_slot_container, match_control, search_match_container, login_callback, on_connection_error);
+    connection = new WebsocketConnection(server_url, server_port, grid, status_message, status_error, match_slot_container, match_control, b_end_game, logout_container, search_match_container, login_callback, on_connection_error);
     connection.connect(i_register_username.value.toLowerCase(), i_register_pw.value);
 }
 
@@ -262,7 +281,7 @@ invite_player = function()
     {
         if (l_match_op.value == "")
         {
-            l_status.innerHTML = "choose your opponent first!";
+            status_error("choose your opponent first!");
         }
         else
         {

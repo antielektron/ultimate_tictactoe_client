@@ -8,6 +8,8 @@ class LocalMatchManager
         this.control_container = control_container;
 
         this.control_container.show();
+        this.control_container.clear_background_color();
+        this.control_container.update_head("local game");
 
         this.local_player_a = new Player("red player", 255,0,0);
         this.local_player_b = new Player("green player", 0,255,0);
@@ -25,15 +27,18 @@ class LocalMatchManager
     click_listener(sub_x, sub_y, x,y)
     {
         // check whether the game is over:
-        if (grid.is_won())
+        if (this.grid.is_won())
         {
-            this.status_label.innerHTML = "" + grid.get_won_player().get_name() + " has won.";
-            this.end_game();
+            this.status_label.innerHTML = "" + this.grid.get_won_player().get_name() + " has won.";
+            this.control_container.update_head("" + this.grid.get_won_player().get_name() + " won");
+            this.control_container.set_background_color(this.grid.get_won_player().get_color_with_alpha(0.4));
         }
-        else if (grid.is_complete())
+        else if (this.grid.is_complete())
         {
             this.status_label.innerHTML = "Draw. Everybody looses!";
-            this.end_game(false);
+            this.control_container.update_head("Draw");
+            this.control_container.set_background_color(theme_color_highlight);
+
         }
         else
         {
@@ -56,6 +61,8 @@ class LocalMatchManager
         var next_player = this.is_local_player_a ? this.local_player_a : this.local_player_b;
         
         this.status_label.innerHTML = "" + "it's " + next_player.get_name() + "'s turn...";
+        this.control_container.update_head("" + next_player.get_name() + "'s move");
+        this.control_container.blink(theme_color_highlight);
         this.grid.player_change_listener(next_player);
     }
 
