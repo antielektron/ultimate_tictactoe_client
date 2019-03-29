@@ -1,11 +1,12 @@
 class OnlineMatchManager
 {
-    constructor(grid, status_label, matches_container, control_container, game_server_connection, match_id, match_state, player_name)
+    constructor(grid, info_func, matches_container, control_container, end_button, game_server_connection, match_id, match_state, player_name)
     {
         this.grid = grid;
-        this.status_label = status_label;
 
         this.match_id = match_id;
+
+        this.info_func = info_func;
 
         this.game_server_connection = game_server_connection;
 
@@ -21,6 +22,7 @@ class OnlineMatchManager
 
         // create match button in match list:
         this.control_container = control_container;
+        this.end_button = end_button;
         this.matches_container = matches_container;
 
         var tmp = matches_container.create_double_button("" + this.online_opponent.get_name(), "+")
@@ -62,7 +64,7 @@ class OnlineMatchManager
 
         this.game_server_connection.send_move(sub_x, sub_y, x, y, this.match_id);
 
-        this.status_label.innerHTML = "waiting for " + this.online_opponent.get_name() + "'s move";
+        this.info_func("waiting for " + this.online_opponent.get_name() + "'s move", false);
     }
 
     on_user_close()
@@ -80,7 +82,7 @@ class OnlineMatchManager
             this.matches_container.container.removeChild(this.match_button_div);
             this.match_button_div = null;
         }
-        this.status_label.innerHTML = "match is closed";
+        this.info_func("match is closed");
         this.control_container.hide();
         this.is_closed = true;
         
@@ -125,6 +127,55 @@ class OnlineMatchManager
         {
             this.match_button.className = "infobar-button-green"
         }
+
+        this.control_container.clear_background_color();
+        this.control_container.update_head("");
+    }
+
+    update_button_text()
+    {
+
+        if (this.match_state.game_over)
+        {
+            this.end_button.innerHTML = "Close Match";
+            return;
+        }
+
+        var contains_move_of_a = false;
+        var contains_move_of_b = false;
+        var i;
+        for (i = 0; i < this.match_state.complete_field.length; i++)
+        {
+            if (this.match_state.complete_field[i].includes(1))
+            {
+                contains_move_of_a = true;
+            }
+            if (this.match_state.complete_field[i].includes(2))
+            {
+                contains_move_of_b = true;
+            }
+        }
+
+        if (contains_move_of_a && contains_move_of_b)
+        {
+            this.end_button.innerHTML = "Abandon Match";
+            return;
+        }
+
+        if (this.match_state.player_a == this.player_name && !contains_move_of_a)
+        {
+            this.end_button.innerHTML = "Reject Invite";
+            return;
+        }
+
+        if (this.match_state.player_b == this.player_name && !contains_move_of_b)
+        {
+            this.end_button.innerHTML = "Reject Invite";
+            return;
+        }
+
+        this.end_button.innerHTML = "Close Match";
+
     }
 
     open_match()
@@ -194,6 +245,11 @@ class OnlineMatchManager
             }
         }
 
+        var control_head = "";
+        this.control_container.clear_background_color();
+
+        this.update_button_text();
+
         this.grid.block_all();
         this.grid.register_click_callback((i,j,k,l) => this.click_listener(i,j,k,l));
 
@@ -201,24 +257,35 @@ class OnlineMatchManager
         {
             if (player_won == this.player_name)
             {
-                this.status_label.innerHTML = "Congratulation, you won!";
+                this.info_func("Congratulation, you won!");
+                control_head += "You won!"
+                this.control_container.set_background_color(this.local_player.get_color_with_alpha(0.4));
+
             }
             else
             {
-                this.status_label.innerHTML = "Game over, you lost!";
+                status_mesage("Game over, you lost!");
+                control_head += "You lost";
+                this.control_container.set_background_color(this.online_opponent.get_color_with_alpha(0.4));
             }
+            this.control_container.update_head(control_head);
             return;
         }
         else if(game_over)
         {
             if (this.grid.is_complete())
             {
-                this.status_label.innerHTML = "Draw. Everyone looses!";
+                this.info_func("Draw. Everyone looses!");
+                control_head += "Draw";
+                this.control_container.set_background_color(theme_color_highlight);
             }
             else
             {
-                this.status_label.innerHTML = "Game was closed by server or opponent";
+                this.info_func("Game was closed by server or opponent");
+                control_head += "Game Closed"
+                this.control_container.set_background_color(theme_color_highlight);
             }
+            this.control_container.update_head(control_head);
             return;
         }
 
@@ -239,17 +306,25 @@ class OnlineMatchManager
                 {
                     this.grid.unblock(x,y);
                 }
-                this.status_label.innerHTML = "It's your turn!";
+                this.info_func("It's your turn!", false);
+                this.control_container.blink(theme_color_highlight);
             }
             else
             {
+                this.info_func("It's your turn!", false);
+                this.control_container.blink(theme_color_highlight);
                 this.grid.unblock_all();
             }
         }
         else
         {
-            this.status_label.innerHTML = "waiting for " + this.online_opponent.get_name() + "'s move";
+            this.info_func("waiting for " + this.online_opponent.get_name() + "'s move", false);
+            this.control_container.blink(theme_color_highlight);
         }
+
+        control_head += "" + current_player_name + "'s move";
+
+        this.control_container.update_head(control_head);
 
         
 

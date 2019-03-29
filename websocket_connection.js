@@ -1,6 +1,6 @@
 class WebsocketConnection
 {
-    constructor(ip, port, grid, status_label, matches_container, control_container, search_container, login_callback_func, error_callback_func)
+    constructor(ip, port, grid, info_func, err_func,matches_container, control_container, end_button, logout_container, search_container, login_callback_func, error_callback_func)
     {
         this.ip = ip;
         this.port = port;
@@ -9,17 +9,20 @@ class WebsocketConnection
         this.socket = null;
         this.registered = false;
 
+        this.info_func = info_func;
+        this.err_func = err_func;
+
         this.grid = grid;
-        this.status_label = status_label;
         this.matches_container = matches_container;
         this.control_container = control_container;
+        this.logout_container = logout_container;
         this.search_container  = search_container;
+
+        this.end_button = end_button;
 
         this.active_match = null;
 
         this.connected = false;
-
-        this.current_end_button = null;
 
         this.login_callback_func = login_callback_func;
 
@@ -30,6 +33,7 @@ class WebsocketConnection
 
 
         this.friends = [];
+        this.elos = [];
 
         this.friend_name_divs = [];
 
@@ -103,7 +107,7 @@ class WebsocketConnection
         this.connected = false;
         if (!this.closed_by_user && !login_failed)
         {
-            this.status_label.innerHTML = "connection to server closed";
+            this.err_func("connection to server closed");
             this.error_callback_func();
         }
         
@@ -136,7 +140,7 @@ class WebsocketConnection
         this.connected = false;
         if (!this.closed_by_user)
         {
-            this.status_label.innerHTML = "connection to server lost";
+            this.err_func("connection to server lost");
             this.error_callback_func();
         }
     }
@@ -184,6 +188,11 @@ class WebsocketConnection
             case "friends_update":
                 this.on_friends_update(msg.data);
                 break;
+            
+            case "elo_update":
+                this.on_elo_update(msg.data);
+                break;
+            
         }
 
     }
@@ -209,12 +218,6 @@ class WebsocketConnection
 
 
         }
-
-        if (this.current_end_button != null)
-        {
-            this.control_container.container.deleteChild(this.current_end_button);
-            this.current_end_button = null;
-        }
     }
 
 
@@ -229,15 +232,6 @@ class WebsocketConnection
             if (id in this.openmatches)
             {
                 delete this.openmatches[id];
-                if (this.active_match == id)
-                {
-                    if (this.current_end_button != null)
-                    {
-                        this.control_container.container.deleteChild(this.current_end_button);
-                        this.current_end_button = null;
-                    }
-
-                }
             }
         }
         else
@@ -249,16 +243,21 @@ class WebsocketConnection
                 {
                     this.openmatches[id].open_match();
                 }
+                else
+                {
+                    this.matches_container.blink(theme_color_highlight);
+                }
             }
             else
             {
                 if (!match_state.game_over)
                 {
-                    this.openmatches[id] = new OnlineMatchManager(this.grid, this.status_label, this.matches_container, this.control_container, this, id, match_state, this.player.get_name());
+                    this.openmatches[id] = new OnlineMatchManager(this.grid, this.info_func, this.matches_container, this.control_container, this.end_button, this, id, match_state, this.player.get_name());
                     if (match_state.last_move == null)
                     {
                         this.notify("new Game against " + this.openmatches[id].online_opponent.get_name());
                     }
+                    this.matches_container.blink(theme_color_highlight);
                 }
                 
             }
@@ -273,8 +272,10 @@ class WebsocketConnection
             this.registered = true;
             this.session_id = data.id;
             this.login_callback_func();
+            this.info_func(data.msg);
+            return;
         }
-        this.status_label.innerHTML = data.msg;
+        this.err_func(data.msg);
         
     }
 
@@ -286,36 +287,48 @@ class WebsocketConnection
             this.session_id = data.id;
             this.player.set_name(data.user);
             this.login_callback_func();
+            this.info_func(data.msg);
+            return;
         }
-
-        this.status_label.innerHTML = data.msg;
+        this.err_func(data.msg);
     }
 
     on_match_request_response(data)
     {
         if (data.success)
         {
-            this.status_label.innerHTML = "match request sent";
+            this.info_func("match request sent");
         }
         else
         {
-            this.status_label.innerHTML = "could not send request: " + data.msg;
+            this.err_func("could not send request: " + data.msg);
         }
     }
 
     on_friend_request_response(data)
     {
-        this.status_label.innerHTML = data.msg;
+        if (data.success)
+        {
+            this.info_func(data.msg);
+            return;
+        }
+        this.err_func(data.msg);
     }
 
     on_unfriend_request_response(data)
     {
-        this.status_label.innerHTML = data.msg;
+        if (data.success)
+        {
+            this.info_func(data.msg);
+            return;
+        }
+        this.err_func(data.msg);
     }
 
     on_friends_update(data)
     {
         this.friends = data.friends;
+        this.elos = data.elos;
 
         // remove complete friend list:
         var n = this.friend_name_divs.length;
@@ -334,7 +347,13 @@ class WebsocketConnection
         
         for (i = 0; i < n; i++)
         {
-            var tmp = this.search_container.create_double_button("" + this.friends[i], "-");
+            var display_name = this.friends[i];
+            if (display_name.length > 10)
+            {
+                display_name = display_name.substr(0,8) + "…";
+            } 
+
+            var tmp = this.search_container.create_double_button("" + display_name + "<small>" + this.elos[i] + "</small>", "-");
 
             tmp[1].name = this.friends[i];
             tmp[2].name = this.friends[i];
@@ -352,6 +371,14 @@ class WebsocketConnection
 
             this.friend_name_divs.push(tmp[0])
         }
+    }
+
+    on_elo_update(data)
+    {
+        console.log("received elo update: " + data.elo);
+        this.logout_container.update_head("logged in as: " + connection.player.get_name() + "<br>Score: " + data.elo);
+        this.logout_container.blink(theme_color_highlight);
+        // TODO
     }
 
 
@@ -491,7 +518,7 @@ class WebsocketConnection
 
     close()
     {
-        this.status_label.innerHTML = "logged out";
+        this.info_func("logged out");
         this.closed_by_user = true;
         this.socket.close();
     }
