@@ -75,7 +75,7 @@ class Infocontainer
         return l;
     }
 
-    create_double_button(text, option)
+    create_double_button(text, option, left_width = "80%", right_width = "20%")
     {
         var div = document.createElement("div");
         div.className = "option-button-container";
@@ -87,8 +87,8 @@ class Infocontainer
         b1.className = "infobar-button";
         b2.className = "infobar-button";
 
-        b1.style.width = "80%";
-        b2.style.width = "20%";
+        b1.style.width = left_width;
+        b2.style.width = right_width;
 
         b2.style.marginLeft = "2%";
         b1.style.marginTop = "1%";

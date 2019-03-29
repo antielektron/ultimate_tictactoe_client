@@ -35,6 +35,9 @@ class WebsocketConnection
         this.friends = [];
         this.elos = [];
 
+        this.top_names = [];
+        this.top_elos = [];
+
         this.friend_name_divs = [];
 
         matches_container.hide();
@@ -376,8 +379,12 @@ class WebsocketConnection
     on_elo_update(data)
     {
         console.log("received elo update: " + data.elo);
-        this.logout_container.update_head("logged in as: " + connection.player.get_name() + "<br>Score: " + data.elo);
+        this.logout_container.update_head("logged in as: " + connection.player.get_name() + "<br>Score: " + data.elo + "<br>Rank: " + data.rank);
+        this.top_names = data.top_names;
+        this.top_elos = data.top_elos;
         this.logout_container.blink(theme_color_highlight);
+
+
         // TODO
     }
 

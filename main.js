@@ -30,9 +30,15 @@ i_register_pw = register_container.create_input("password", true);
 b_register = register_container.create_button("register/login");
 //register_container.create_label("(creates new account for a new username)");
 
-// logout:
-logout_container = main_menu.create_infocontainer("logged in as: ");
-b_logout = logout_container.create_button("logout");
+// logout TODO: rename container:
+logout_container = main_menu.create_infocontainer("Logged in as: ");
+b_logout = logout_container.create_button("Logout");
+b_show_highscores = logout_container.create_button("Highscores");
+
+highscore_container = main_menu.create_infocontainer("Highscores");
+b_close_highscores = highscore_container.create_button("Close Highscores");
+l_highscores = highscore_container.create_label("...");
+l_highscores.style.textAlign = "left"
 
 
 // fill subcontainer:
@@ -139,6 +145,7 @@ disable_all_containers = function()
     search_match_container.hide();
     match_control.hide();
     status_container.hide();
+    highscore_container.hide();
 
     dummy_main.hide();
     dummy_sub.hide();
@@ -290,6 +297,40 @@ invite_player = function()
     }
 }
 
+show_highscores = function()
+{
+    l_highscores.innerHTML = "";
+    var new_text = "";
+    if (connection != null)
+    {
+        if (connection.top_names != null && connection.top_elos != null)
+        {
+            var n = connection.top_names.length;
+            var i;
+            for (i = 0; i < n; i++)
+            {
+                name = connection.top_names[i];
+                if (name.length > 10)
+                {
+                    name=name.substring(0,10) + "…";
+                }
+                new_text += "\#" + (i+1) + ": " + name + " [" + connection.top_elos[i] + "]<br>";
+            }
+
+            l_highscores.innerHTML = new_text;
+        }
+    }
+
+    logout_container.hide();
+    highscore_container.show();
+}
+
+close_highscores = function()
+{
+    highscore_container.hide();
+    logout_container.show();
+}
+
 
 
 // initiate stuff and connect events:
@@ -304,6 +345,10 @@ b_logout.addEventListener("click", logout);
 
 b_match_search.addEventListener("click", search_match);
 b_match_invite.addEventListener("click", invite_player);
+
+b_show_highscores.addEventListener("click", show_highscores);
+b_close_highscores.addEventListener("click", close_highscores);
+
 
 reconnect();
 
