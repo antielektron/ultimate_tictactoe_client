@@ -353,7 +353,7 @@ class WebsocketConnection
                 display_name = display_name.substr(0,8) + "…";
             } 
 
-            var tmp = this.search_container.create_double_button("" + display_name + "<small>" + this.elos[i] + "</small>", "-");
+            var tmp = this.search_container.create_double_button("" + display_name + "<sup><span style=\"font-size: 0.5em\">" + this.elos[i] + "</span></sup>", "-");
 
             tmp[1].name = this.friends[i];
             tmp[2].name = this.friends[i];
